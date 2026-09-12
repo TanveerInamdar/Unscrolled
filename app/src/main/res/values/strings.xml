@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Reels Blocker</string>
+    <string name="accessibility_service_label">Reels Blocker</string>
+    <string name="accessibility_service_description">Detects when you open Instagram Reels and sends you back to stop doomscrolling. Only reads Instagram screen structure; no data leaves your device.</string>
+
+    <string name="status_enabled">Blocking is ON</string>
+    <string name="status_disabled">Blocking is OFF</string>
+    <string name="status_service_off">Accessibility service not enabled</string>
+    <string name="status_service_on">Accessibility service enabled</string>
+
+    <string name="toggle_blocking">Enable Reels blocking</string>
+    <string name="open_accessibility_settings">Open Accessibility Settings</string>
+    <string name="restricted_settings_hint">Sideloaded app? In Settings → Apps → Reels Blocker → ⋮ menu, tap \"Allow restricted settings\" before enabling the service.</string>
+
+    <string name="toast_reels_blocked">Reels blocked</string>
+    <string name="notification_channel_name">Block alerts</string>
+    <string name="notification_channel_description">Shows when a Reel is blocked</string>
+    <string name="notification_blocked_title">Reels Blocker</string>
+    <string name="subtitle">Blocks the Reels tab and top Suggested header. Stories and single DM Reels are allowed.</string>
+</resources>
