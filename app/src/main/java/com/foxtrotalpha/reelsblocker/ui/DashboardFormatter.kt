@@ -16,8 +16,14 @@ import java.util.concurrent.TimeUnit
 
 object DashboardFormatter {
 
+    const val MINUTES_UNSCROLLED_PER_BLOCK = 2
+
     private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault())
     private val stepFormatter = NumberFormat.getIntegerInstance()
+
+    fun timeUnscrolledMs(blockCount: Int): Long {
+        return blockCount.toLong() * MINUTES_UNSCROLLED_PER_BLOCK * TimeUnit.MINUTES.toMillis(1)
+    }
 
     fun formatTodayDate(date: LocalDate): String {
         return date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
@@ -82,7 +88,11 @@ object DashboardFormatter {
         stepsToday: Long?,
     ): String {
         return when {
-            blocksToday > 0 -> context.getString(R.string.hero_summary_blocks, blocksToday)
+            blocksToday > 0 -> context.getString(
+                R.string.hero_summary_blocks,
+                blocksToday,
+                formatDurationMs(timeUnscrolledMs(blocksToday)),
+            )
             unproductiveMsToday > 0L -> context.getString(
                 R.string.hero_summary_time,
                 formatDurationMs(unproductiveMsToday),

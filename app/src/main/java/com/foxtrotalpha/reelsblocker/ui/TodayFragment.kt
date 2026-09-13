@@ -48,25 +48,15 @@ class TodayFragment : Fragment() {
             },
             onBlockingToggled = { enabled ->
                 BlockerPreferences.setBlockingEnabled(requireContext(), enabled)
-                dashboardViewModel.setFocusProtectionState(
-                    serviceEnabled = AccessibilityUtils.isServiceEnabled(
-                        requireContext(),
-                        ReelsBlockerService::class.java,
-                    ),
-                    blockingEnabled = enabled,
-                    voiceRoastEnabled = BlockerPreferences.isVoiceRoastEnabled(requireContext()),
-                )
+                pushFocusProtection(blockingEnabled = enabled)
             },
             onVoiceRoastToggled = { enabled ->
                 BlockerPreferences.setVoiceRoastEnabled(requireContext(), enabled)
-                dashboardViewModel.setFocusProtectionState(
-                    serviceEnabled = AccessibilityUtils.isServiceEnabled(
-                        requireContext(),
-                        ReelsBlockerService::class.java,
-                    ),
-                    blockingEnabled = BlockerPreferences.isBlockingEnabled(requireContext()),
-                    voiceRoastEnabled = enabled,
-                )
+                pushFocusProtection(voiceRoastEnabled = enabled)
+            },
+            onProfanityToggled = { enabled ->
+                BlockerPreferences.setProfanityEnabled(requireContext(), enabled)
+                pushFocusProtection(profanityEnabled = enabled)
             },
         )
 
@@ -91,6 +81,22 @@ class TodayFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun pushFocusProtection(
+        blockingEnabled: Boolean = BlockerPreferences.isBlockingEnabled(requireContext()),
+        voiceRoastEnabled: Boolean = BlockerPreferences.isVoiceRoastEnabled(requireContext()),
+        profanityEnabled: Boolean = BlockerPreferences.isProfanityEnabled(requireContext()),
+    ) {
+        dashboardViewModel.setFocusProtectionState(
+            serviceEnabled = AccessibilityUtils.isServiceEnabled(
+                requireContext(),
+                ReelsBlockerService::class.java,
+            ),
+            blockingEnabled = blockingEnabled,
+            voiceRoastEnabled = voiceRoastEnabled,
+            profanityEnabled = profanityEnabled,
+        )
     }
 
     override fun onDestroyView() {

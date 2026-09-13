@@ -15,6 +15,7 @@ class DashboardBinder(
     private val onOpenAccessibilitySettings: () -> Unit,
     private val onBlockingToggled: (Boolean) -> Unit,
     private val onVoiceRoastToggled: (Boolean) -> Unit,
+    private val onProfanityToggled: (Boolean) -> Unit,
 ) {
 
     fun bind(state: DashboardState) {
@@ -28,6 +29,7 @@ class DashboardBinder(
         }
         binding.heroUnproductiveValue.text = DashboardFormatter.formatDurationMs(state.unproductiveMsToday)
         binding.heroBlocksValue.text = state.blocksToday.toString()
+        binding.heroTimeUnscrolledValue.text = DashboardFormatter.formatDurationMs(state.timeUnscrolledMs)
 
         bindMetrics(state)
         bindFocusProtection(state)
@@ -51,8 +53,13 @@ class DashboardBinder(
         )
         binding.metricBlocks.bind(
             icon = R.drawable.ic_shield,
-            value = state.blocksToday.toString(),
-            label = context.getString(R.string.metric_blocks),
+            value = DashboardFormatter.formatDurationMs(state.timeUnscrolledMs),
+            label = context.getString(R.string.metric_time_unscrolled),
+            comparison = context.resources.getQuantityString(
+                R.plurals.blocks_today,
+                state.blocksToday,
+                state.blocksToday,
+            ).takeIf { state.blocksToday > 0 },
             available = true,
         )
         binding.metricSleep.bind(
@@ -76,6 +83,7 @@ class DashboardBinder(
             switchChecked = state.blockingEnabled,
             switchLabel = context.getString(R.string.toggle_blocking),
             voiceRoastChecked = state.voiceRoastEnabled,
+            profanityChecked = state.profanityEnabled,
             warning = if (!state.serviceEnabled) {
                 context.getString(R.string.focus_protection_service_off)
             } else {
@@ -88,6 +96,7 @@ class DashboardBinder(
             },
             onCheckedChange = onBlockingToggled,
             onVoiceRoastCheckedChange = onVoiceRoastToggled,
+            onProfanityCheckedChange = onProfanityToggled,
             onAction = onOpenAccessibilitySettings,
         )
     }

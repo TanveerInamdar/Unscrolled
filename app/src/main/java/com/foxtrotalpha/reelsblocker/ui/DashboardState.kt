@@ -20,6 +20,7 @@ data class DashboardState(
     val greeting: String = "",
     val heroSummary: String = "",
     val blocksToday: Int = 0,
+    val timeUnscrolledMs: Long = 0L,
     val stepsToday: Long? = null,
     val activeCaloriesToday: Double? = null,
     val unproductiveMsToday: Long = 0L,
@@ -40,4 +41,5 @@ data class DashboardState(
     val serviceEnabled: Boolean = false,
     val blockingEnabled: Boolean = true,
     val voiceRoastEnabled: Boolean = true,
+    val profanityEnabled: Boolean = false,
 )

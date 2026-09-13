@@ -30,6 +30,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val serviceEnabled = MutableStateFlow(false)
     private val blockingEnabled = MutableStateFlow(true)
     private val voiceRoastEnabled = MutableStateFlow(true)
+    private val profanityEnabled = MutableStateFlow(false)
 
     private val todayIso = MutableStateFlow(LocalDate.now(zone).toString())
 
@@ -76,8 +77,9 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         serviceEnabled,
         blockingEnabled,
         voiceRoastEnabled,
-    ) { serviceOn, blockingOn, voiceOn ->
-        Triple(serviceOn, blockingOn, voiceOn)
+        profanityEnabled,
+    ) { serviceOn, blockingOn, voiceOn, profanityOn ->
+        ProtectionData(serviceOn, blockingOn, voiceOn, profanityOn)
     }
 
     private val permissionData = combine(
@@ -90,9 +92,10 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             healthGranted = healthGranted,
             calendarGranted = calendarGranted,
             hcAvailable = hcAvailable,
-            serviceEnabled = protection.first,
-            blockingEnabled = protection.second,
-            voiceRoastEnabled = protection.third,
+            serviceEnabled = protection.serviceEnabled,
+            blockingEnabled = protection.blockingEnabled,
+            voiceRoastEnabled = protection.voiceRoastEnabled,
+            profanityEnabled = protection.profanityEnabled,
         )
     }
 
@@ -120,10 +123,12 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         serviceEnabled: Boolean,
         blockingEnabled: Boolean,
         voiceRoastEnabled: Boolean,
+        profanityEnabled: Boolean,
     ) {
         this.serviceEnabled.value = serviceEnabled
         this.blockingEnabled.value = blockingEnabled
         this.voiceRoastEnabled.value = voiceRoastEnabled
+        this.profanityEnabled.value = profanityEnabled
     }
 
     private fun buildState(
@@ -160,6 +165,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
                 stepsToday = core.healthToday?.stepCount,
             ),
             blocksToday = core.blocksToday,
+            timeUnscrolledMs = DashboardFormatter.timeUnscrolledMs(core.blocksToday),
             stepsToday = core.healthToday?.stepCount,
             activeCaloriesToday = core.healthToday?.activeCaloriesKcal,
             unproductiveMsToday = core.unproductiveToday,
@@ -186,6 +192,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             serviceEnabled = permissions.serviceEnabled,
             blockingEnabled = permissions.blockingEnabled,
             voiceRoastEnabled = permissions.voiceRoastEnabled,
+            profanityEnabled = permissions.profanityEnabled,
         )
     }
 
@@ -227,5 +234,13 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         val serviceEnabled: Boolean,
         val blockingEnabled: Boolean,
         val voiceRoastEnabled: Boolean,
+        val profanityEnabled: Boolean,
+    )
+
+    private data class ProtectionData(
+        val serviceEnabled: Boolean,
+        val blockingEnabled: Boolean,
+        val voiceRoastEnabled: Boolean,
+        val profanityEnabled: Boolean,
     )
 }

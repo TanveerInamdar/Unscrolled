@@ -24,11 +24,13 @@ class StatusCardView @JvmOverloads constructor(
         switchChecked: Boolean,
         switchLabel: String,
         voiceRoastChecked: Boolean = true,
+        profanityChecked: Boolean = false,
         warning: String? = null,
         actionLabel: String? = null,
         @DrawableRes icon: Int = R.drawable.ic_shield,
         onCheckedChange: ((Boolean) -> Unit)? = null,
         onVoiceRoastCheckedChange: ((Boolean) -> Unit)? = null,
+        onProfanityCheckedChange: ((Boolean) -> Unit)? = null,
         onAction: (() -> Unit)? = null,
     ) {
         binding.statusIcon.setImageResource(icon)
@@ -45,6 +47,12 @@ class StatusCardView @JvmOverloads constructor(
         binding.voiceRoastSwitch.isChecked = voiceRoastChecked
         binding.voiceRoastSwitch.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
             onVoiceRoastCheckedChange?.invoke(isChecked)
+        }
+
+        binding.profanitySwitch.setOnCheckedChangeListener(null)
+        binding.profanitySwitch.isChecked = profanityChecked
+        binding.profanitySwitch.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+            onProfanityCheckedChange?.invoke(isChecked)
         }
 
         binding.statusPill.text = if (enabled) {

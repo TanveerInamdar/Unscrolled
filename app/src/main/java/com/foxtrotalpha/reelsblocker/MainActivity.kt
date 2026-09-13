@@ -199,6 +199,7 @@ class MainActivity : AppCompatActivity() {
             serviceEnabled = AccessibilityUtils.isServiceEnabled(this, ReelsBlockerService::class.java),
             blockingEnabled = BlockerPreferences.isBlockingEnabled(this),
             voiceRoastEnabled = BlockerPreferences.isVoiceRoastEnabled(this),
+            profanityEnabled = BlockerPreferences.isProfanityEnabled(this),
         )
     }
 

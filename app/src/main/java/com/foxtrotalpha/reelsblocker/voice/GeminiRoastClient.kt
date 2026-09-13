@@ -11,13 +11,13 @@ import java.util.concurrent.TimeUnit
 internal class GeminiRoastClient(
     private val http: OkHttpClient = defaultClient,
 ) {
-        fun generateLine(context: RoastContext): String {
+    fun generateLine(context: RoastContext, allowProfanity: Boolean = false): String {
         val body = JSONObject()
             .put(
                 "system_instruction",
                 JSONObject().put(
                     "parts",
-                    JSONArray().put(JSONObject().put("text", SYSTEM_PROMPT)),
+                    JSONArray().put(JSONObject().put("text", systemPrompt(allowProfanity))),
                 ),
             )
             .put(
@@ -82,16 +82,24 @@ internal class GeminiRoastClient(
         private const val ENDPOINT =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent"
 
-        private const val SYSTEM_PROMPT =
-            "You write one spoken line for a phone that just blocked a short-form video. " +
+        private fun systemPrompt(allowProfanity: Boolean): String {
+            val languageRule = if (allowProfanity) {
+                "Use light swear words like fuck, asshole, damn, shit, and hell when they fit. " +
+                    "No slurs, including racial slurs. No sexual content, sexual body-part talk, or innuendo. " +
+                    "No rape, assault, or violence against a person. Insult the scrolling habit, not a threat. "
+            } else {
+                "No slurs, including racial slurs. No curse words. Hell is allowed only in what the hell. "
+            }
+            return "You write one spoken line for a phone that just blocked a short-form video. " +
                 "Be hurtful and insulting, not cute. Roast the listener as an idiot or a dummy " +
                 "while still hitting the assigned roast angle. You should use words like idiot, " +
                 "stupid, dummy, and phrases like what the hell are you doing, along with the actual roast. " +
-                "No slurs. No curse words. Hell is allowed only in what the hell. " +
+                languageRule +
                 "Curt, quirky, mean, and funny. Maximum eighteen words. " +
                 "No quotes, no emoji, no hashtags. Write numbers as words. Output only the line. " +
                 "Use only the assigned roast angle. Unless the angle is step count, " +
                 "do not mention steps, walking, or grass."
+        }
 
         val defaultClient: OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)

@@ -14,12 +14,13 @@
     <string name="hero_overline">Your day at a glance</string>
     <string name="hero_summary_default">Small steps. Clear mind. One day at a time.</string>
     <string name="hero_summary_clear">Your day is still quiet. Keep it that way.</string>
-    <string name="hero_summary_blocks">You blocked short-form video %1$d times today.</string>
+    <string name="hero_summary_blocks">You blocked short-form video %1$d times today — %2$s unscrolled.</string>
     <string name="hero_summary_time">%1$s of unproductive screen time so far.</string>
     <string name="metric_unavailable">Not available yet</string>
     <string name="metric_steps">Steps</string>
     <string name="metric_screen_time">Screen time</string>
     <string name="metric_blocks">Blocks</string>
+    <string name="metric_time_unscrolled">Time unscrolled</string>
     <string name="metric_sleep">Sleep</string>
     <string name="status_pill_on">ON</string>
     <string name="status_pill_off">OFF</string>
@@ -69,6 +70,7 @@
 
     <string name="toggle_blocking">Enable Reels blocking</string>
     <string name="toggle_voice_roast">Voice roast audio</string>
+    <string name="toggle_profanity">Light swearing</string>
     <string name="open_accessibility_settings">Open Accessibility Settings</string>
     <string name="open_usage_access_settings">Grant Usage Access</string>
     <string name="status_usage_on">Usage access granted</string>

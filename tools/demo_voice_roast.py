@@ -25,17 +25,25 @@ OUTPUT_DIR = ROOT / "tools" / "demo_output"
 OUTPUT_MP3 = OUTPUT_DIR / "demo_roast.mp3"
 PACKAGE = "com.foxtrotalpha.reelsblocker"
 
-SYSTEM_PROMPT = (
-    "You write one spoken line for a phone that just blocked a short-form video. "
-    "Be hurtful and insulting, not cute. Roast the listener as an idiot or a dummy "
-    "while still hitting the assigned roast angle. You should use words like idiot, "
-    "stupid, dummy, and phrases like what the hell are you doing, along with the actual roast. "
-    "No slurs. No curse words. Hell is allowed only in what the hell. "
-    "Curt, quirky, mean, and funny. Maximum eighteen words. "
-    "No quotes, no emoji, no hashtags. Write numbers as words. Output only the line. "
-    "Use only the assigned roast angle. Unless the angle is step count, "
-    "do not mention steps, walking, or grass."
-)
+def system_prompt(allow_profanity: bool) -> str:
+    language_rule = (
+        "Use light swear words like fuck, asshole, damn, shit, and hell when they fit. "
+        "No slurs, including racial slurs. No sexual content, sexual body-part talk, or innuendo. "
+        "No rape, assault, or violence against a person. Insult the scrolling habit, not a threat. "
+        if allow_profanity
+        else "No slurs, including racial slurs. No curse words. Hell is allowed only in what the hell. "
+    )
+    return (
+        "You write one spoken line for a phone that just blocked a short-form video. "
+        "Be hurtful and insulting, not cute. Roast the listener as an idiot or a dummy "
+        "while still hitting the assigned roast angle. You should use words like idiot, "
+        "stupid, dummy, and phrases like what the hell are you doing, along with the actual roast. "
+        + language_rule
+        + "Curt, quirky, mean, and funny. Maximum eighteen words. "
+        "No quotes, no emoji, no hashtags. Write numbers as words. Output only the line. "
+        "Use only the assigned roast angle. Unless the angle is step count, "
+        "do not mention steps, walking, or grass."
+    )
 
 GEMINI_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
@@ -148,6 +156,20 @@ def format_duration(ms: int | None) -> str | None:
     if hours > 0:
         return f"{hours} hours {minutes} minutes"
     return f"{minutes} minutes"
+
+
+def load_boolean_pref(work_dir: Path, key: str, default: bool = False) -> bool:
+    prefs = work_dir / "reels_blocker_prefs.xml"
+    if not prefs.exists() and not pull_app_file("shared_prefs/reels_blocker_prefs.xml", prefs):
+        return default
+    try:
+        root = ET.parse(prefs).getroot()
+    except ET.ParseError:
+        return default
+    for node in root.findall("boolean"):
+        if node.get("name") == key:
+            return node.get("value", "false").lower() == "true"
+    return default
 
 
 def load_recent_lines(work_dir: Path) -> list[str]:
@@ -297,9 +319,9 @@ def sanitize_line(raw: str) -> str:
     return cleaned
 
 
-def gemini_line(api_key: str, user_prompt: str) -> str:
+def gemini_line(api_key: str, user_prompt: str, allow_profanity: bool) -> str:
     payload = {
-        "system_instruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+        "system_instruction": {"parts": [{"text": system_prompt(allow_profanity)}]},
         "contents": [{"parts": [{"text": user_prompt}]}],
         "generationConfig": {"temperature": 0.9, "maxOutputTokens": 56},
     }
@@ -382,13 +404,15 @@ def main() -> int:
         work_dir = Path(tmp)
         db_path = pull_database(work_dir)
         recent_lines = load_recent_lines(work_dir)
+        allow_profanity = load_boolean_pref(work_dir, "profanity_enabled")
         user_prompt = build_user_prompt(db_path, today, recent_lines)
 
     print(f"Pulled phone DB for {today}")
+    print(f"Light swearing: {'on' if allow_profanity else 'off'}")
     print("Gemini context:")
     print(f"  {user_prompt}")
     print("Calling Gemini Flash Lite...")
-    line = gemini_line(gemini_key, user_prompt)
+    line = gemini_line(gemini_key, user_prompt, allow_profanity)
     print(f"One-liner: {line}")
     print("Calling ElevenLabs Flash v2.5...")
     elevenlabs_speak(eleven_key, voice_id, line)

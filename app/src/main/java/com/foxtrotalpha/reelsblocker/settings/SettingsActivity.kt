@@ -46,6 +46,10 @@ class SettingsActivity : AppCompatActivity() {
         binding.settingsVoiceRoastSwitch.setOnCheckedChangeListener { _, isChecked ->
             BlockerPreferences.setVoiceRoastEnabled(this, isChecked)
         }
+        binding.settingsProfanitySwitch.isChecked = BlockerPreferences.isProfanityEnabled(this)
+        binding.settingsProfanitySwitch.setOnCheckedChangeListener { _, isChecked ->
+            BlockerPreferences.setProfanityEnabled(this, isChecked)
+        }
         binding.settingsOpenAccessibility.setOnClickListener {
             AccessibilityUtils.openAccessibilitySettings(this)
         }

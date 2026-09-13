@@ -48,8 +48,9 @@ object VoiceRoastCoordinator {
         try {
             val recent = loadRecent(appContext)
             val roastContext = RoastContextBuilder.build(appContext, packageName, reason, recent)
+            val allowProfanity = BlockerPreferences.isProfanityEnabled(appContext)
             val line = withContext(Dispatchers.IO) {
-                gemini.generateLine(roastContext)
+                gemini.generateLine(roastContext, allowProfanity)
             }
             rememberLine(appContext, line)
             Log.i(TAG, "Gemini line ready")
