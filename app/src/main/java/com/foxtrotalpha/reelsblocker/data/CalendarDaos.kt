@@ -18,6 +18,12 @@ interface CalendarEventDao {
     @Query("SELECT * FROM calendar_events ORDER BY start_ms ASC")
     fun observeAll(): Flow<List<CalendarEvent>>
 
+    @Query("SELECT * FROM calendar_events WHERE date = :date ORDER BY start_ms ASC")
+    fun observeForDate(date: String): Flow<List<CalendarEvent>>
+
+    @Query("SELECT * FROM calendar_events WHERE date = :date ORDER BY start_ms ASC")
+    suspend fun forDate(date: String): List<CalendarEvent>
+
     @Query("DELETE FROM calendar_events WHERE date = :date")
     suspend fun deleteForDate(date: String)
 

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -16,6 +18,26 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val localProperties = Properties()
+        val localFile = rootProject.file("local.properties")
+        if (localFile.exists()) {
+            localFile.inputStream().use { localProperties.load(it) }
+        }
+
+        fun secret(name: String, default: String = ""): String {
+            val raw = localProperties.getProperty(name, default)?.trim().orEmpty()
+            val value = raw.ifEmpty { default }
+            return value.replace("\\", "\\\\").replace("\"", "\\\"")
+        }
+
+        buildConfigField("String", "GEMINI_API_KEY", "\"${secret("GEMINI_API_KEY")}\"")
+        buildConfigField("String", "ELEVENLABS_API_KEY", "\"${secret("ELEVENLABS_API_KEY")}\"")
+        buildConfigField(
+            "String",
+            "ELEVENLABS_VOICE_ID",
+            "\"${secret("ELEVENLABS_VOICE_ID", "pNInz6obpgDQGcFmaJgB")}\"",
+        )
     }
 
     buildTypes {
@@ -50,12 +72,15 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.activity:activity-ktx:1.9.3")
 
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("androidx.health.connect:connect-client:1.1.0-alpha11")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 

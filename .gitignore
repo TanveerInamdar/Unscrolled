@@ -2,7 +2,7 @@
 *.apk
 *.ap_
 *.aab
-
+.cursor/
 # Files for the ART/Dalvik VM
 *.dex
 
@@ -77,6 +77,9 @@ lint/tmp/
 
 # Kotlin
 .kotlin/
+
+# Demo TTS output
+tools/demo_output/
 
 # Private planning docs
 Integrations.md

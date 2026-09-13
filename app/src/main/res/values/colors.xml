@@ -7,4 +7,7 @@
     <color name="on_surface_variant">#49454F</color>
     <color name="success">#2E7D32</color>
     <color name="warning">#ED6C02</color>
+    <color name="dashboard_text_primary">#FFFFFF</color>
+    <color name="dashboard_text_secondary">#CACACA</color>
+    <color name="dashboard_bar_inactive">#8E8E8E</color>
 </resources>

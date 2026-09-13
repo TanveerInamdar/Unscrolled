@@ -22,6 +22,9 @@ interface BlockEventDao {
     @Query("SELECT COUNT(*) FROM block_events WHERE date = :date")
     fun countForDate(date: String): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM block_events WHERE date = :date")
+    suspend fun countForDateOnce(date: String): Int
+
     @Query("SELECT * FROM block_events ORDER BY timestamp_ms DESC")
     fun observeAll(): Flow<List<BlockEvent>>
 
@@ -59,6 +62,29 @@ interface DailyAppUsageDao {
     @Query("SELECT * FROM daily_app_usage WHERE date = :date ORDER BY foreground_ms DESC")
     suspend fun forDate(date: String): List<DailyAppUsage>
 
+    @Query("SELECT * FROM daily_app_usage WHERE date = :date ORDER BY foreground_ms DESC")
+    fun observeForDate(date: String): Flow<List<DailyAppUsage>>
+
+    @Query(
+        """
+        SELECT COALESCE(SUM(u.foreground_ms), 0)
+        FROM daily_app_usage u
+        JOIN tracked_apps t ON t.package_name = u.package_name
+        WHERE t.is_unproductive = 1 AND u.date = :date
+        """,
+    )
+    fun observeUnproductiveTotalForDate(date: String): Flow<Long>
+
+    @Query(
+        """
+        SELECT COALESCE(SUM(u.foreground_ms), 0)
+        FROM daily_app_usage u
+        JOIN tracked_apps t ON t.package_name = u.package_name
+        WHERE t.is_unproductive = 1 AND u.date = :date
+        """,
+    )
+    suspend fun unproductiveTotalForDate(date: String): Long
+
     @Query("SELECT * FROM daily_app_usage ORDER BY date DESC, foreground_ms DESC")
     fun observeAll(): Flow<List<DailyAppUsage>>
 
@@ -83,6 +109,18 @@ interface DailyAppUsageDao {
         """,
     )
     suspend fun unproductiveTotals(fromDate: String, toDate: String): List<DailyUnproductiveTotal>
+
+    @Query(
+        """
+        SELECT u.date AS date, SUM(u.foreground_ms) AS total_ms
+        FROM daily_app_usage u
+        JOIN tracked_apps t ON t.package_name = u.package_name
+        WHERE t.is_unproductive = 1 AND u.date BETWEEN :fromDate AND :toDate
+        GROUP BY u.date
+        ORDER BY u.date
+        """,
+    )
+    fun observeUnproductiveTotals(fromDate: String, toDate: String): Flow<List<DailyUnproductiveTotal>>
 }
 
 @Dao

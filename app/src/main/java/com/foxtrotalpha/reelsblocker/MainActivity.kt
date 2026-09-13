@@ -6,24 +6,30 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.health.connect.client.HealthConnectClient
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import com.foxtrotalpha.reelsblocker.data.AppDatabase
-import com.foxtrotalpha.reelsblocker.data.DevDatabaseFormatter
+import androidx.lifecycle.repeatOnLifecycle
+import com.foxtrotalpha.reelsblocker.calendar.CalendarAccessUtils
 import com.foxtrotalpha.reelsblocker.data.IntegrationSync
 import com.foxtrotalpha.reelsblocker.databinding.ActivityMainBinding
 import com.foxtrotalpha.reelsblocker.health.HealthConnectPermissions
+import com.foxtrotalpha.reelsblocker.ui.DashboardBinder
+import com.foxtrotalpha.reelsblocker.ui.DashboardViewModel
 import com.foxtrotalpha.reelsblocker.usage.ScreenTimeSync
 import com.foxtrotalpha.reelsblocker.usage.UsageAccessUtils
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private var mainContentInitialized = false
+    private val dashboardViewModel: DashboardViewModel by viewModels()
+    private lateinit var dashboardBinder: DashboardBinder
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -42,6 +48,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        dashboardBinder = DashboardBinder(
+            context = this,
+            binding = binding,
+            onRequestHealthPermissions = { requestHealthConnectPermissions() },
+            onRequestCalendarPermission = { requestCalendarPermission() },
+        )
+
         requestNotificationPermissionIfNeeded()
         updateUsageAccessUi()
     }
@@ -49,6 +62,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateUsageAccessUi()
+        refreshDashboardPermissions()
     }
 
     private fun updateUsageAccessUi() {
@@ -84,80 +98,36 @@ class MainActivity : AppCompatActivity() {
             AccessibilityUtils.openAccessibilitySettings(this)
         }
 
-        observeBlocksToday()
-
-        if (BuildConfig.DEBUG) {
-            binding.devDatabaseCard.visibility = View.VISIBLE
-            binding.requestHealthPermissionsButton.visibility = View.VISIBLE
-            binding.requestHealthPermissionsButton.setOnClickListener {
-                requestHealthConnectPermissions()
-            }
-            binding.requestCalendarPermissionButton.visibility = View.VISIBLE
-            binding.requestCalendarPermissionButton.setOnClickListener {
-                requestCalendarPermission()
-            }
-            setupDevDatabasePanel()
-        }
+        setupDashboard()
     }
 
-    private fun setupDevDatabasePanel() {
-        val database = AppDatabase.get(applicationContext)
-        val trackedDao = database.trackedAppDao()
-        val blockDao = database.blockEventDao()
-        val usageDao = database.dailyAppUsageDao()
-        val healthDao = database.dailyHealthMetricsDao()
-        val sleepDao = database.sleepSessionDao()
-        val calendarDao = database.calendarEventDao()
-
+    private fun setupDashboard() {
         lifecycleScope.launch {
-            combine(
-                combine(
-                    trackedDao.observeAll(),
-                    blockDao.observeAll(),
-                    usageDao.observeAll(),
-                    healthDao.observeAll(),
-                    sleepDao.observeAll(),
-                ) { trackedApps, blockEvents, dailyUsage, healthMetrics, sleepSessions ->
-                    DevDatabaseFormatter.Snapshot(
-                        trackedApps = trackedApps,
-                        blockEvents = blockEvents,
-                        dailyUsage = dailyUsage,
-                        healthMetrics = healthMetrics,
-                        sleepSessions = sleepSessions,
-                        calendarEvents = emptyList(),
-                    )
-                },
-                calendarDao.observeAll(),
-            ) { snapshot, calendarEvents ->
-                snapshot.copy(calendarEvents = calendarEvents)
-            }.collect { snapshot ->
-                binding.devDatabaseSummaryText.text = getString(
-                    R.string.dev_database_summary,
-                    snapshot.trackedApps.size,
-                    snapshot.blockEvents.size,
-                    snapshot.dailyUsage.size,
-                    snapshot.healthMetrics.size,
-                    snapshot.sleepSessions.size,
-                    snapshot.calendarEvents.size,
-                )
-                binding.devDatabaseDumpText.text = DevDatabaseFormatter.format(
-                    this@MainActivity,
-                    snapshot,
-                )
-            }
-        }
-    }
-
-    private fun observeBlocksToday() {
-        val dao = AppDatabase.get(applicationContext).blockEventDao()
-        lifecycleScope.launch {
-            dao.countForDate(AppDatabase.isoDate()).collect { count ->
-                binding.blocksTodayText.text = if (count == 0) {
-                    getString(R.string.blocks_today_zero)
-                } else {
-                    resources.getQuantityString(R.plurals.blocks_today, count, count)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                dashboardViewModel.state.collect { state ->
+                    dashboardBinder.bind(state)
                 }
             }
+        }
+    }
+
+    private fun refreshDashboardPermissions() {
+        val hcAvailable = HealthConnectPermissions.isHealthConnectAvailable(this)
+        dashboardViewModel.setHealthConnectAvailable(hcAvailable)
+        dashboardViewModel.setCalendarPermissionGranted(
+            CalendarAccessUtils.hasReadCalendarPermission(this),
+        )
+
+        if (!hcAvailable) {
+            dashboardViewModel.setHealthPermissionGranted(false)
+            return
+        }
+
+        lifecycleScope.launch {
+            val client = HealthConnectClient.getOrCreate(applicationContext)
+            dashboardViewModel.setHealthPermissionGranted(
+                HealthConnectPermissions.hasAnyPermission(client),
+            )
         }
     }
 
@@ -200,8 +170,6 @@ class MainActivity : AppCompatActivity() {
             else -> getString(R.string.status_disabled)
         }
 
-        binding.usageStatusText.text = getString(R.string.status_usage_on)
-
         val statusColor = when {
             serviceEnabled && blockingEnabled -> R.color.success
             serviceEnabled -> R.color.warning
@@ -210,10 +178,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.blockingStatusText.setTextColor(
             ContextCompat.getColor(this, statusColor),
-        )
-
-        binding.usageStatusText.setTextColor(
-            ContextCompat.getColor(this, R.color.success),
         )
     }
 

@@ -5,6 +5,7 @@ import android.view.accessibility.AccessibilityEvent
 import com.foxtrotalpha.reelsblocker.data.AppDatabase
 import com.foxtrotalpha.reelsblocker.data.BlockEvent
 import com.foxtrotalpha.reelsblocker.detector.ReelsDetector
+import com.foxtrotalpha.reelsblocker.voice.VoiceRoastCoordinator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -73,6 +74,7 @@ class ReelsBlockerService : AccessibilityService() {
         )
         serviceScope.launch {
             AppDatabase.get(applicationContext).blockEventDao().insert(event)
+            VoiceRoastCoordinator.speakForBlock(applicationContext, packageName, reason)
         }
     }
 
@@ -82,6 +84,7 @@ class ReelsBlockerService : AccessibilityService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        VoiceRoastCoordinator.release()
         serviceScope.cancel()
     }
 

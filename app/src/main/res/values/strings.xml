@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Reels Blocker</string>
     <string name="accessibility_service_label">Reels Blocker</string>
-    <string name="accessibility_service_description">Detects when you open Instagram Reels or YouTube Shorts and sends you back to stop doomscrolling. Only reads screen structure of those apps; no data leaves your device.</string>
+    <string name="accessibility_service_description">Detects when you open Instagram Reels or YouTube Shorts and sends you back to stop doomscrolling. Screen structure stays on the device. If API keys are configured, a short roast line is sent to Gemini and spoken by ElevenLabs.</string>
 
     <string name="status_enabled">Blocking is ON</string>
     <string name="status_disabled">Blocking is OFF</string>
@@ -31,10 +31,28 @@
     <string name="reason_unknown">Unknown</string>
     <string name="subtitle">Blocks Instagram Reels (For You, Explore, Suggested, DMs) and YouTube Shorts.</string>
 
-    <string name="dev_database_title">Dev: local database</string>
-    <string name="dev_database_subtitle">Debug builds only — live local Room database</string>
-    <string name="dev_database_summary">%1$d tracked · %2$d blocks · %3$d usage · %4$d health · %5$d sleep · %6$d calendar</string>
-    <string name="request_health_permissions">Request Health Connect permissions</string>
+    <string name="dashboard_hero_steps">Steps</string>
+    <string name="dashboard_hero_unproductive">Unproductive</string>
+    <string name="dashboard_hero_blocks">Blocked</string>
+    <string name="dashboard_blocks_zero">0</string>
+    <plurals name="dashboard_blocks_count">
+        <item quantity="one">%d</item>
+        <item quantity="other">%d</item>
+    </plurals>
+    <string name="dashboard_section_steps">Steps</string>
+    <string name="dashboard_section_screen_time">Screen time</string>
+    <string name="dashboard_section_sleep">Sleep</string>
+    <string name="dashboard_section_calendar">Today\'s calendar</string>
+    <string name="dashboard_steps_permission">Connect Health Connect to see your steps.</string>
+    <string name="dashboard_steps_empty">No step data yet.</string>
+    <string name="dashboard_screen_time_empty">No usage recorded today.</string>
+    <string name="dashboard_unproductive_total">Unproductive today: %1$s</string>
+    <string name="dashboard_sleep_permission">Connect Health Connect to see sleep data.</string>
+    <string name="dashboard_sleep_empty">No sleep logged last night.</string>
+    <string name="dashboard_calendar_permission">Allow calendar access to see today\'s events.</string>
+    <string name="dashboard_calendar_empty">No events today.</string>
+    <string name="dashboard_calendar_overflow">+%1$d more events</string>
+    <string name="request_health_permissions">Connect Health Connect</string>
     <string name="request_calendar_permission">Request calendar permission</string>
     <string name="health_permissions_rationale_title">Health data access</string>
     <string name="health_permissions_rationale_body">Reels Blocker reads steps, calories, and sleep from Health Connect to build your productivity context. Data stays on your device and is never sent to a server.</string>

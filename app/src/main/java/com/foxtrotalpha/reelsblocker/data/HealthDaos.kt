@@ -18,6 +18,17 @@ interface DailyHealthMetricsDao {
     @Query("SELECT * FROM daily_health_metrics ORDER BY date DESC")
     fun observeAll(): Flow<List<DailyHealthMetrics>>
 
+    @Query("SELECT * FROM daily_health_metrics WHERE date = :date LIMIT 1")
+    fun observeForDate(date: String): Flow<DailyHealthMetrics?>
+
+    @Query("SELECT * FROM daily_health_metrics WHERE date = :date LIMIT 1")
+    suspend fun forDate(date: String): DailyHealthMetrics?
+
+    @Query(
+        "SELECT * FROM daily_health_metrics WHERE date BETWEEN :fromDate AND :toDate ORDER BY date ASC",
+    )
+    fun observeBetween(fromDate: String, toDate: String): Flow<List<DailyHealthMetrics>>
+
     @Query("DELETE FROM daily_health_metrics WHERE date BETWEEN :fromDate AND :toDate")
     suspend fun deleteRange(fromDate: String, toDate: String)
 
@@ -36,6 +47,12 @@ interface SleepSessionDao {
 
     @Query("SELECT * FROM sleep_sessions ORDER BY wake_ms DESC")
     fun observeAll(): Flow<List<SleepSession>>
+
+    @Query("SELECT * FROM sleep_sessions WHERE date = :date ORDER BY duration_ms DESC")
+    fun observeForWakeDate(date: String): Flow<List<SleepSession>>
+
+    @Query("SELECT * FROM sleep_sessions WHERE date = :date ORDER BY duration_ms DESC")
+    suspend fun forWakeDate(date: String): List<SleepSession>
 
     @Query("DELETE FROM sleep_sessions WHERE wake_ms BETWEEN :fromWakeMs AND :toWakeMs")
     suspend fun deleteWakeRange(fromWakeMs: Long, toWakeMs: Long)
