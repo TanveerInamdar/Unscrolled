@@ -81,6 +81,7 @@ lint/tmp/
 # Private planning docs
 Integrations.md
 REELS_BLOCKER.md
+final_version.md
 # OS-specific files
 .DS_Store
 .DS_Store?
