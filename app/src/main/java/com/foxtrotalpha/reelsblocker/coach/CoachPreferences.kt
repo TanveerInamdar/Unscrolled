@@ -21,7 +21,7 @@ internal object CoachPreferences {
     private const val KEY_ASSISTANT_ID = "assistant_id"
     private const val KEY_ASSISTANT_SETUP = "assistant_setup_version"
     private const val KEY_MESSAGES = "messages"
-    const val ASSISTANT_SETUP_VERSION = 3
+    const val ASSISTANT_SETUP_VERSION = 5
 
     private fun prefs(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)

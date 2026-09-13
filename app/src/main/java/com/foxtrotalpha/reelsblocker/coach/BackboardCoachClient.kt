@@ -144,7 +144,7 @@ internal class BackboardCoachClient(
         private const val ENDPOINT = "https://app.backboard.io/api/threads/messages"
         private const val ASSISTANTS_URL = "https://app.backboard.io/api/assistants"
         private const val LLM_PROVIDER = "openrouter"
-        private const val MODEL_NAME = "openai/gpt-oss-120b"
+        private const val MODEL_NAME = "minimax/minimax-m3"
 
         private val client: OkHttpClient = GeminiRoastClient.defaultClient.newBuilder()
             .connectTimeout(20, TimeUnit.SECONDS)

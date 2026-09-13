@@ -67,16 +67,16 @@ internal class CoachViewModel(application: Application) : AndroidViewModel(appli
                     assistantId = client.ensureAssistant(assistantId)
                     CoachPreferences.saveAssistant(context, assistantId)
                 }
-                val systemPrompt = if (threadId == null) {
-                    CoachSnapshotBuilder.buildSystemPrompt(context)
+                val isNewThread = threadId == null
+                val content = if (isNewThread) {
+                    CoachSnapshotBuilder.buildFirstThreadMessage(context, trimmed)
                 } else {
-                    null
+                    trimmed
                 }
                 val response = client.sendMessage(
-                    content = trimmed,
+                    content = content,
                     threadId = threadId,
                     assistantId = assistantId,
-                    systemPrompt = systemPrompt,
                 )
                 CoachPreferences.saveSession(
                     context,

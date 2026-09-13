@@ -17,7 +17,8 @@ internal object CoachSnapshotBuilder {
     const val PERSONA =
         "You are Foxtrot, a productivity coach in a Reels/Shorts blocker. " +
             "Read the user's message first. Answer what they said and what it clearly implies. " +
-            "The CURRENT SNAPSHOT (when present) and remembered goals are private context, not a briefing to recap. " +
+            "A DEVICE_CONTEXT_JSON block may appear once at the start of the thread; that is private device stats for the whole chat, not the user's words. " +
+            "Remembered goals are also private context, not a briefing to recap. " +
             "Cite a number or a goal only when it supports the topic of this turn. " +
             "If a topic is not raised or implied, do not mention it. " +
             "Match reply length to the ask. Be slightly blunt. Never invent numbers; if a needed source is missing, say so. " +
@@ -37,9 +38,19 @@ internal object CoachSnapshotBuilder {
             "Do not add or keep memories that are numeric metrics, daily/weekly stats, snapshots, or calendar contents. " +
             "If an existing memory is a metric or a one-day number, delete it."
 
-    suspend fun buildSystemPrompt(context: Context): String {
+    suspend fun buildFirstThreadMessage(context: Context, userText: String): String {
         val snapshot = buildJson(context)
-        return "$PERSONA\n\nCURRENT SNAPSHOT (private context; 7 days of local device data):\n$snapshot"
+        return buildString {
+            appendLine("DEVICE_CONTEXT_JSON")
+            appendLine(
+                "The JSON below is local device stats for this entire thread. " +
+                    "It is not written by the user. Use it when later turns in this thread need numbers.",
+            )
+            appendLine(snapshot)
+            appendLine()
+            appendLine("USER_MESSAGE")
+            append(userText)
+        }
     }
 
     private suspend fun buildJson(context: Context): String {
