@@ -78,6 +78,9 @@ lint/tmp/
 # Kotlin
 .kotlin/
 
+# Private planning docs
+Integrations.md
+REELS_BLOCKER.md
 # OS-specific files
 .DS_Store
 .DS_Store?
