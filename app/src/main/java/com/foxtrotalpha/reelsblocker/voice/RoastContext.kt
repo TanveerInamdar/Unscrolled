@@ -17,7 +17,8 @@ internal data class RoastContext(
 ) {
     fun toUserPrompt(): String {
         val lines = buildList {
-            add("Blocked $appLabel short-form video. Reason: $reason.")
+            add("Blocked app: $appLabel.")
+            add("They were watching short-form video in $appLabel. Reason: $reason.")
             add("Blocks today: $blocksToday.")
             add("Unproductive screen time today: ${formatDuration(unproductiveMsToday)}.")
             add("$appLabel screen time today: ${formatDuration(blockedAppMsToday)}.")

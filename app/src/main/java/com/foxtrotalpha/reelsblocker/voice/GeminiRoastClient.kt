@@ -91,6 +91,8 @@ internal class GeminiRoastClient(
                 "No slurs, including racial slurs. No curse words. Hell is allowed only in what the hell. "
             }
             return "You write one spoken line for a phone that just blocked a short-form video. " +
+                "The user prompt names the blocked app. You may mention that app if it makes the line funnier, " +
+                "or skip the app name; do not force it into every line. " +
                 "Be hurtful and insulting, not cute. Roast the listener as an idiot or a dummy " +
                 "while still hitting the assigned roast angle. You should use words like idiot, " +
                 "stupid, dummy, and phrases like what the hell are you doing, along with the actual roast. " +

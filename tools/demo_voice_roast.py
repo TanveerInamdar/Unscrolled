@@ -35,6 +35,8 @@ def system_prompt(allow_profanity: bool) -> str:
     )
     return (
         "You write one spoken line for a phone that just blocked a short-form video. "
+        "The user prompt names the blocked app. You may mention that app if it makes the line funnier, "
+        "or skip the app name; do not force it into every line. "
         "Be hurtful and insulting, not cute. Roast the listener as an idiot or a dummy "
         "while still hitting the assigned roast angle. You should use words like idiot, "
         "stupid, dummy, and phrases like what the hell are you doing, along with the actual roast. "
@@ -288,7 +290,8 @@ def build_user_prompt(db_path: Path, today: str, recent_lines: list[str]) -> str
     focus = random.choice(foci)
 
     parts = [
-        f"Blocked {app_label} short-form video. Reason: {reason}.",
+        f"Blocked app: {app_label}.",
+        f"They were watching short-form video in {app_label}. Reason: {reason}.",
         f"Blocks today: {blocks_today}.",
         f"Unproductive screen time today: {format_duration(unproductive)}.",
         f"{app_label} screen time today: {format_duration(blocked_ms)}.",
