@@ -10,8 +10,15 @@ import java.util.Date
 import java.util.Locale
 
 @Database(
-    entities = [BlockEvent::class, DailyAppUsage::class, TrackedApp::class],
-    version = 1,
+    entities = [
+        BlockEvent::class,
+        DailyAppUsage::class,
+        TrackedApp::class,
+        DailyHealthMetrics::class,
+        SleepSession::class,
+        CalendarEvent::class,
+    ],
+    version = 3,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -19,6 +26,9 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun blockEventDao(): BlockEventDao
     abstract fun dailyAppUsageDao(): DailyAppUsageDao
     abstract fun trackedAppDao(): TrackedAppDao
+    abstract fun dailyHealthMetricsDao(): DailyHealthMetricsDao
+    abstract fun sleepSessionDao(): SleepSessionDao
+    abstract fun calendarEventDao(): CalendarEventDao
 
     companion object {
         private const val DB_NAME = "foxtrot_alpha.db"

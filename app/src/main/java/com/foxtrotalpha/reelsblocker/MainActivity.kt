@@ -12,7 +12,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.foxtrotalpha.reelsblocker.data.AppDatabase
 import com.foxtrotalpha.reelsblocker.data.DevDatabaseFormatter
+import com.foxtrotalpha.reelsblocker.data.IntegrationSync
 import com.foxtrotalpha.reelsblocker.databinding.ActivityMainBinding
+import com.foxtrotalpha.reelsblocker.health.HealthConnectPermissions
 import com.foxtrotalpha.reelsblocker.usage.ScreenTimeSync
 import com.foxtrotalpha.reelsblocker.usage.UsageAccessUtils
 import kotlinx.coroutines.flow.combine
@@ -26,6 +28,14 @@ class MainActivity : AppCompatActivity() {
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { /* optional — blocking still works without it */ }
+
+    private val healthConnectPermissionLauncher = registerForActivityResult(
+        HealthConnectPermissions.createPermissionContract(),
+    ) { /* sync runs on next onResume */ }
+
+    private val readCalendarPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { /* sync runs on next onResume */ }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +70,7 @@ class MainActivity : AppCompatActivity() {
 
         refreshStatus()
         syncScreenTimeOnStartup()
+        syncIntegrationsOnStartup()
     }
 
     private fun setupMainContent() {
@@ -77,6 +88,14 @@ class MainActivity : AppCompatActivity() {
 
         if (BuildConfig.DEBUG) {
             binding.devDatabaseCard.visibility = View.VISIBLE
+            binding.requestHealthPermissionsButton.visibility = View.VISIBLE
+            binding.requestHealthPermissionsButton.setOnClickListener {
+                requestHealthConnectPermissions()
+            }
+            binding.requestCalendarPermissionButton.visibility = View.VISIBLE
+            binding.requestCalendarPermissionButton.setOnClickListener {
+                requestCalendarPermission()
+            }
             setupDevDatabasePanel()
         }
     }
@@ -86,26 +105,44 @@ class MainActivity : AppCompatActivity() {
         val trackedDao = database.trackedAppDao()
         val blockDao = database.blockEventDao()
         val usageDao = database.dailyAppUsageDao()
+        val healthDao = database.dailyHealthMetricsDao()
+        val sleepDao = database.sleepSessionDao()
+        val calendarDao = database.calendarEventDao()
 
         lifecycleScope.launch {
             combine(
-                trackedDao.observeAll(),
-                blockDao.observeAll(),
-                usageDao.observeAll(),
-            ) { trackedApps, blockEvents, dailyUsage ->
-                Triple(trackedApps, blockEvents, dailyUsage)
-            }.collect { (trackedApps, blockEvents, dailyUsage) ->
+                combine(
+                    trackedDao.observeAll(),
+                    blockDao.observeAll(),
+                    usageDao.observeAll(),
+                    healthDao.observeAll(),
+                    sleepDao.observeAll(),
+                ) { trackedApps, blockEvents, dailyUsage, healthMetrics, sleepSessions ->
+                    DevDatabaseFormatter.Snapshot(
+                        trackedApps = trackedApps,
+                        blockEvents = blockEvents,
+                        dailyUsage = dailyUsage,
+                        healthMetrics = healthMetrics,
+                        sleepSessions = sleepSessions,
+                        calendarEvents = emptyList(),
+                    )
+                },
+                calendarDao.observeAll(),
+            ) { snapshot, calendarEvents ->
+                snapshot.copy(calendarEvents = calendarEvents)
+            }.collect { snapshot ->
                 binding.devDatabaseSummaryText.text = getString(
                     R.string.dev_database_summary,
-                    trackedApps.size,
-                    blockEvents.size,
-                    dailyUsage.size,
+                    snapshot.trackedApps.size,
+                    snapshot.blockEvents.size,
+                    snapshot.dailyUsage.size,
+                    snapshot.healthMetrics.size,
+                    snapshot.sleepSessions.size,
+                    snapshot.calendarEvents.size,
                 )
                 binding.devDatabaseDumpText.text = DevDatabaseFormatter.format(
                     this@MainActivity,
-                    trackedApps,
-                    blockEvents,
-                    dailyUsage,
+                    snapshot,
                 )
             }
         }
@@ -128,6 +165,23 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             ScreenTimeSync.syncAllOnStartup(applicationContext)
         }
+    }
+
+    private fun syncIntegrationsOnStartup() {
+        lifecycleScope.launch {
+            IntegrationSync.syncOnStartup(applicationContext)
+        }
+    }
+
+    private fun requestHealthConnectPermissions() {
+        if (!HealthConnectPermissions.isHealthConnectAvailable(this)) {
+            return
+        }
+        healthConnectPermissionLauncher.launch(HealthConnectPermissions.requiredPermissions())
+    }
+
+    private fun requestCalendarPermission() {
+        readCalendarPermissionLauncher.launch(Manifest.permission.READ_CALENDAR)
     }
 
     private fun refreshStatus() {

@@ -166,6 +166,26 @@
                         android:textIsSelectable="true"
                         android:textSize="11sp"
                         tools:text="── block_events (35) ──" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/requestHealthPermissionsButton"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/request_health_permissions"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/requestCalendarPermissionButton"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/request_calendar_permission"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
