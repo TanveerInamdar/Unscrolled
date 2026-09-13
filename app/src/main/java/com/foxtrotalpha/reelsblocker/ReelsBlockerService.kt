@@ -28,14 +28,14 @@ class ReelsBlockerService : AccessibilityService() {
         try {
             val result = ReelsDetector.evaluate(rootNode)
             if (result.shouldBlock) {
-                maybeBlock(result.reason?.name ?: "REELS")
+                maybeBlock(result.reason)
             }
         } finally {
             rootNode.recycle()
         }
     }
 
-    private fun maybeBlock(reason: String) {
+    private fun maybeBlock(reason: ReelsDetector.Result.Reason?) {
         val now = System.currentTimeMillis()
         if (now - lastBlockTimestampMs < BLOCK_COOLDOWN_MS) {
             return
@@ -44,7 +44,7 @@ class ReelsBlockerService : AccessibilityService() {
 
         performGlobalAction(GLOBAL_ACTION_BACK)
 
-        BlockFeedback.showBlocked(applicationContext)
+        BlockFeedback.showBlocked(applicationContext, reason)
     }
 
     override fun onInterrupt() {

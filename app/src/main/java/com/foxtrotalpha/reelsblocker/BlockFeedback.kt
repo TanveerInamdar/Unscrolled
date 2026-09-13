@@ -13,23 +13,36 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import com.foxtrotalpha.reelsblocker.detector.ReelsDetector
 
 object BlockFeedback {
 
     private const val CHANNEL_ID = "reels_blocked"
     private const val NOTIFICATION_ID = 1001
 
-    fun showBlocked(context: Context) {
+    fun showBlocked(context: Context, reason: ReelsDetector.Result.Reason?) {
+        val reasonLabel = reasonLabel(context, reason)
         vibrate(context)
-        showNotification(context)
+        showNotification(context, reasonLabel)
 
-        // Toast often does not appear from AccessibilityService on Android 11+.
         Handler(Looper.getMainLooper()).post {
             Toast.makeText(
                 context.applicationContext,
-                context.getString(R.string.toast_reels_blocked),
+                context.getString(R.string.notification_blocked_with_reason, reasonLabel),
                 Toast.LENGTH_LONG,
             ).show()
+        }
+    }
+
+    private fun reasonLabel(context: Context, reason: ReelsDetector.Result.Reason?): String {
+        return when (reason) {
+            ReelsDetector.Result.Reason.REELS_TAB_SELECTED ->
+                context.getString(R.string.reason_reels_tab)
+            ReelsDetector.Result.Reason.SUGGESTED_REELS_FEED ->
+                context.getString(R.string.reason_suggested)
+            ReelsDetector.Result.Reason.DM_REELS_HEADER_SELECTED ->
+                context.getString(R.string.reason_dm_reels)
+            null -> context.getString(R.string.reason_unknown)
         }
     }
 
@@ -50,17 +63,17 @@ object BlockFeedback {
         }
     }
 
-    private fun showNotification(context: Context) {
+    private fun showNotification(context: Context, reasonLabel: String) {
         createChannel(context)
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher)
             .setContentTitle(context.getString(R.string.notification_blocked_title))
-            .setContentText(context.getString(R.string.toast_reels_blocked))
+            .setContentText(context.getString(R.string.notification_blocked_with_reason, reasonLabel))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_STATUS)
             .setAutoCancel(true)
-            .setTimeoutAfter(2500)
+            .setTimeoutAfter(3000)
             .build()
 
         if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {

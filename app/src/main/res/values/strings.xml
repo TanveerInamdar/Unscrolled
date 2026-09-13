@@ -16,6 +16,11 @@
     <string name="toast_reels_blocked">Reels blocked</string>
     <string name="notification_channel_name">Block alerts</string>
     <string name="notification_channel_description">Shows when a Reel is blocked</string>
-    <string name="notification_blocked_title">Reels Blocker</string>
+    <string name="notification_blocked_title">Reels blocked</string>
+    <string name="notification_blocked_with_reason">Detected: %1$s</string>
+    <string name="reason_reels_tab">Reels tab</string>
+    <string name="reason_suggested">Suggested feed</string>
+    <string name="reason_dm_reels">DM Reels header</string>
+    <string name="reason_unknown">Unknown</string>
     <string name="subtitle">Blocks the Reels tab and top Suggested header. Stories and single DM Reels are allowed.</string>
 </resources>
