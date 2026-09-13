@@ -34,6 +34,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private fun build(context: Context): AppDatabase {
             return Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
+                .addMigrations(*DatabaseMigrations.ALL)
                 .addCallback(SeedCallback)
                 .build()
         }

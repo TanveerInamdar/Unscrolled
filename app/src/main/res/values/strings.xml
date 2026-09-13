@@ -11,6 +11,9 @@
 
     <string name="toggle_blocking">Enable Reels blocking</string>
     <string name="open_accessibility_settings">Open Accessibility Settings</string>
+    <string name="open_usage_access_settings">Grant Usage Access</string>
+    <string name="status_usage_on">Usage access granted</string>
+    <string name="status_usage_off">Usage access not granted — screen time won\'t sync</string>
     <string name="restricted_settings_hint">Sideloaded app? In Settings → Apps → Reels Blocker → ⋮ menu, tap \"Allow restricted settings\" before enabling the service.</string>
 
     <string name="toast_reels_blocked">Reels blocked</string>
@@ -27,5 +30,8 @@
     <string name="reason_reel_player">Short-form video player</string>
     <string name="reason_unknown">Unknown</string>
     <string name="subtitle">Blocks Instagram Reels (For You, Explore, Suggested, DMs) and YouTube Shorts.</string>
-</resources>
 
+    <string name="dev_database_title">Dev: local database</string>
+    <string name="dev_database_subtitle">Debug builds only — live local Room database</string>
+    <string name="dev_database_summary">%1$d tracked · %2$d blocks · %3$d usage rows</string>
+</resources>

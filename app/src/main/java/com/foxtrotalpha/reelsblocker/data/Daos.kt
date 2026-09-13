@@ -13,8 +13,17 @@ interface BlockEventDao {
     @Insert
     suspend fun insert(event: BlockEvent)
 
+    @Insert
+    suspend fun insertAll(events: List<BlockEvent>)
+
+    @Query("SELECT COUNT(*) FROM block_events")
+    suspend fun count(): Int
+
     @Query("SELECT COUNT(*) FROM block_events WHERE date = :date")
     fun countForDate(date: String): Flow<Int>
+
+    @Query("SELECT * FROM block_events ORDER BY timestamp_ms DESC")
+    fun observeAll(): Flow<List<BlockEvent>>
 
     @Query(
         """
@@ -32,6 +41,9 @@ interface BlockEventDao {
 
     @Query("SELECT * FROM block_events ORDER BY timestamp_ms DESC LIMIT :limit")
     suspend fun recent(limit: Int): List<BlockEvent>
+
+    @Query("DELETE FROM block_events")
+    suspend fun deleteAll()
 }
 
 @Dao
@@ -41,8 +53,20 @@ interface DailyAppUsageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(usages: List<DailyAppUsage>)
 
+    @Query("SELECT COUNT(*) FROM daily_app_usage")
+    suspend fun count(): Int
+
     @Query("SELECT * FROM daily_app_usage WHERE date = :date ORDER BY foreground_ms DESC")
     suspend fun forDate(date: String): List<DailyAppUsage>
+
+    @Query("SELECT * FROM daily_app_usage ORDER BY date DESC, foreground_ms DESC")
+    fun observeAll(): Flow<List<DailyAppUsage>>
+
+    @Query("DELETE FROM daily_app_usage WHERE date BETWEEN :fromDate AND :toDate")
+    suspend fun deleteRange(fromDate: String, toDate: String)
+
+    @Query("DELETE FROM daily_app_usage")
+    suspend fun deleteAll()
 
     /**
      * The "unproductive apps" rollup: one total per day, grouping whatever
@@ -67,8 +91,14 @@ interface TrackedAppDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(apps: List<TrackedApp>)
 
+    @Query("SELECT COUNT(*) FROM tracked_apps")
+    suspend fun count(): Int
+
     @Query("SELECT * FROM tracked_apps ORDER BY label")
     suspend fun all(): List<TrackedApp>
+
+    @Query("SELECT * FROM tracked_apps ORDER BY label")
+    fun observeAll(): Flow<List<TrackedApp>>
 
     @Query("SELECT * FROM tracked_apps WHERE is_unproductive = 1")
     suspend fun unproductive(): List<TrackedApp>
