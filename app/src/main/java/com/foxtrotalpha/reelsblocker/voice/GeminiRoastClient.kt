@@ -32,7 +32,7 @@ internal class GeminiRoastClient(
             .put(
                 "generationConfig",
                 JSONObject()
-                    .put("temperature", 0.9)
+                    .put("temperature", 1.05)
                     .put("maxOutputTokens", 40),
             )
 
@@ -45,7 +45,7 @@ internal class GeminiRoastClient(
         http.newCall(request).execute().use { response ->
             val payload = response.body?.string().orEmpty()
             if (!response.isSuccessful) {
-                error("Gemini HTTP ${response.code}")
+                error("Gemini HTTP ${response.code}: ${payload.take(180)}")
             }
             return sanitizeLine(parseText(payload))
         }
@@ -84,13 +84,15 @@ internal class GeminiRoastClient(
 
         private const val SYSTEM_PROMPT =
             "You write one spoken line for a phone that just blocked a short-form video. " +
-                "Slightly rude, curt, and quirky. Maximum twelve words. No quotes, no emoji, " +
-                "no hashtags. Write numbers as words. Output only the line."
+                "Slightly rude, curt, quirky, a bit mean, and funny. Maximum twelve words. " +
+                "No quotes, no emoji, no hashtags. Write numbers as words. Output only the line. " +
+                "Use only the assigned roast angle. Unless the angle is step count, " +
+                "do not mention steps, walking, or grass."
 
         val defaultClient: OkHttpClient = OkHttpClient.Builder()
-            .connectTimeout(8, TimeUnit.SECONDS)
-            .readTimeout(8, TimeUnit.SECONDS)
-            .writeTimeout(8, TimeUnit.SECONDS)
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
+            .writeTimeout(15, TimeUnit.SECONDS)
             .build()
     }
 }

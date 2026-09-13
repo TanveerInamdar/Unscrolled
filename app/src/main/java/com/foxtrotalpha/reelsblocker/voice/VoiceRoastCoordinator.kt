@@ -31,9 +31,11 @@ object VoiceRoastCoordinator {
         reason: ReelsDetector.Result.Reason?,
     ) {
         if (!ApiKeys.isConfigured) {
+            Log.w(TAG, "Voice roast skipped: API keys are empty in this install")
             return
         }
         if (!inFlight.compareAndSet(false, true)) {
+            Log.d(TAG, "Voice roast skipped: previous request still in flight")
             return
         }
 
@@ -45,6 +47,7 @@ object VoiceRoastCoordinator {
                 gemini.generateLine(roastContext)
             }
             rememberLine(appContext, line)
+            Log.i(TAG, "Gemini line ready")
 
             val audioFile = File(appContext.cacheDir, "voice_roast.mp3")
             try {
@@ -71,10 +74,12 @@ object VoiceRoastCoordinator {
     }
 
     private suspend fun play(context: Context, block: (VoiceRoastPlayer) -> Unit) {
-        playMutex.withLock {
-            val roastPlayer = player ?: VoiceRoastPlayer(context).also { player = it }
-            roastPlayer.stop()
-            block(roastPlayer)
+        withContext(Dispatchers.Main) {
+            playMutex.withLock {
+                val roastPlayer = player ?: VoiceRoastPlayer(context).also { player = it }
+                roastPlayer.stop()
+                block(roastPlayer)
+            }
         }
     }
 

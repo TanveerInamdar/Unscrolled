@@ -78,3 +78,12 @@ data class DailyUnproductiveTotal(
     @ColumnInfo(name = "total_ms")
     val totalMs: Long,
 )
+
+/** Aggregate row: block count for one date. */
+data class DailyBlockTotal(
+    @ColumnInfo(name = "date")
+    val date: String,
+
+    @ColumnInfo(name = "total")
+    val total: Int,
+)

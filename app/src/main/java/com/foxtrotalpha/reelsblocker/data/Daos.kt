@@ -45,6 +45,17 @@ interface BlockEventDao {
     @Query("SELECT * FROM block_events ORDER BY timestamp_ms DESC LIMIT :limit")
     suspend fun recent(limit: Int): List<BlockEvent>
 
+    @Query(
+        """
+        SELECT date AS date, COUNT(*) AS total
+        FROM block_events
+        WHERE date BETWEEN :fromDate AND :toDate
+        GROUP BY date
+        ORDER BY date
+        """,
+    )
+    suspend fun countsBetween(fromDate: String, toDate: String): List<DailyBlockTotal>
+
     @Query("DELETE FROM block_events")
     suspend fun deleteAll()
 }

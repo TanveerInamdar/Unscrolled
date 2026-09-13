@@ -14,7 +14,9 @@ import androidx.health.connect.client.HealthConnectClient
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import android.content.Intent
 import com.foxtrotalpha.reelsblocker.calendar.CalendarAccessUtils
+import com.foxtrotalpha.reelsblocker.coach.CoachActivity
 import com.foxtrotalpha.reelsblocker.data.IntegrationSync
 import com.foxtrotalpha.reelsblocker.databinding.ActivityMainBinding
 import com.foxtrotalpha.reelsblocker.health.HealthConnectPermissions
@@ -96,6 +98,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.openSettingsButton.setOnClickListener {
             AccessibilityUtils.openAccessibilitySettings(this)
+        }
+
+        binding.coachChatButton.setOnClickListener {
+            startActivity(Intent(this, CoachActivity::class.java))
         }
 
         setupDashboard()

@@ -37,7 +37,8 @@ internal class ElevenLabsTtsClient(
 
         http.newCall(request).execute().use { response ->
             if (!response.isSuccessful) {
-                error("ElevenLabs HTTP ${response.code}")
+                val detail = response.body?.string().orEmpty().take(180)
+                error("ElevenLabs HTTP ${response.code}: $detail")
             }
             val bytes = response.body?.bytes() ?: error("ElevenLabs returned empty audio")
             output.writeBytes(bytes)

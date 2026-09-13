@@ -34,9 +34,20 @@
                 android:textColor="@color/on_surface"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/coachChatButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/coachChatButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/coach_open"
+                android:src="@drawable/ic_chat"
+                app:layout_constraintBottom_toBottomOf="@id/titleText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/titleText" />
 
             <TextView
                 android:id="@+id/subtitleText"

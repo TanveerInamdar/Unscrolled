@@ -29,6 +29,11 @@ interface DailyHealthMetricsDao {
     )
     fun observeBetween(fromDate: String, toDate: String): Flow<List<DailyHealthMetrics>>
 
+    @Query(
+        "SELECT * FROM daily_health_metrics WHERE date BETWEEN :fromDate AND :toDate ORDER BY date ASC",
+    )
+    suspend fun between(fromDate: String, toDate: String): List<DailyHealthMetrics>
+
     @Query("DELETE FROM daily_health_metrics WHERE date BETWEEN :fromDate AND :toDate")
     suspend fun deleteRange(fromDate: String, toDate: String)
 

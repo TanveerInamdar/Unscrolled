@@ -56,4 +56,13 @@
     <string name="request_calendar_permission">Request calendar permission</string>
     <string name="health_permissions_rationale_title">Health data access</string>
     <string name="health_permissions_rationale_body">Reels Blocker reads steps, calories, and sleep from Health Connect to build your productivity context. Data stays on your device and is never sent to a server.</string>
+
+    <string name="coach_open">Open productivity coach</string>
+    <string name="coach_title">Coach</string>
+    <string name="coach_back">Back</string>
+    <string name="coach_new_chat">New chat</string>
+    <string name="coach_send">Send</string>
+    <string name="coach_input_hint">Ask about your stats…</string>
+    <string name="coach_empty_hint">Ask about today\'s screen time, blocks, calendar, steps, or sleep. The first message of a chat includes your last 7 days of data.</string>
+    <string name="coach_setup_needed">Add BACKBOARD_API_KEY to local.properties, then rebuild the app to talk to the coach.</string>
 </resources>

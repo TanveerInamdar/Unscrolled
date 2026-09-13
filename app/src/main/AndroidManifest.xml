@@ -23,6 +23,11 @@
         android:theme="@style/Theme.ReelsBlocker">
 
         <activity
+            android:name=".coach.CoachActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
