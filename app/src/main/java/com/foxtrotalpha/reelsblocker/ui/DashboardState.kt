@@ -39,4 +39,5 @@ data class DashboardState(
     val hasSleepData: Boolean = false,
     val serviceEnabled: Boolean = false,
     val blockingEnabled: Boolean = true,
+    val voiceRoastEnabled: Boolean = true,
 )

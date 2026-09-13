@@ -65,7 +65,10 @@ object BlockFeedback {
         createChannel(context)
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher)
+            .setSmallIcon(R.drawable.ic_leaf)
+            .setLargeIcon(
+                android.graphics.BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher),
+            )
             .setContentTitle(context.getString(R.string.notification_blocked_title))
             .setContentText(context.getString(R.string.notification_blocked_with_reason, reasonLabel))
             .setPriority(NotificationCompat.PRIORITY_HIGH)

@@ -198,6 +198,7 @@ class MainActivity : AppCompatActivity() {
         dashboardViewModel.setFocusProtectionState(
             serviceEnabled = AccessibilityUtils.isServiceEnabled(this, ReelsBlockerService::class.java),
             blockingEnabled = BlockerPreferences.isBlockingEnabled(this),
+            voiceRoastEnabled = BlockerPreferences.isVoiceRoastEnabled(this),
         )
     }
 

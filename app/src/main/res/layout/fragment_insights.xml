@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/insightsRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
+        android:fillViewport="true"
         android:paddingBottom="@dimen/space_xxl">
 
         <LinearLayout
@@ -34,55 +33,47 @@
                 android:text="@string/insights_subtitle"
                 android:textAppearance="@style/TextAppearance.Zen.Body" />
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/rangeGroup"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg"
-                app:selectionRequired="true"
-                app:singleSelection="true">
+                android:layout_marginTop="@dimen/space_xl"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/rangeSeven"
-                    style="@style/Widget.Zen.Chip.Range"
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/insights_key_metrics"
+                    android:textAppearance="@style/TextAppearance.Zen.SectionTitle" />
+
+                <TextView
+                    android:id="@+id/rangeLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="@string/insights_range_7" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/rangeThirty"
-                    style="@style/Widget.Zen.Chip.Range"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:enabled="false"
-                    android:text="@string/insights_range_30" />
-            </com.google.android.material.chip.ChipGroup>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_xs"
-                android:text="@string/insights_range_30_hint"
-                android:textAppearance="@style/TextAppearance.Zen.Caption" />
+                    android:text="@string/insights_range_7"
+                    android:textAppearance="@style/TextAppearance.Zen.Label"
+                    android:textColor="@color/zen_sage" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg"
+                android:layout_marginTop="@dimen/space_md"
+                android:minHeight="@dimen/metric_tile_min_height"
                 android:orientation="horizontal">
 
-                <com.foxtrotalpha.reelsblocker.ui.components.MetricCardView
-                    android:id="@+id/summaryScreen"
+                <com.foxtrotalpha.reelsblocker.ui.components.ChartCardView
+                    android:id="@+id/screenChartCard"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/space_sm"
                     android:layout_weight="1" />
 
-                <com.foxtrotalpha.reelsblocker.ui.components.MetricCardView
-                    android:id="@+id/summaryBlocks"
+                <com.foxtrotalpha.reelsblocker.ui.components.ChartCardView
+                    android:id="@+id/blocksChartCard"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/space_sm"
                     android:layout_weight="1" />
             </LinearLayout>
@@ -91,46 +82,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_md"
+                android:minHeight="@dimen/metric_tile_min_height"
                 android:orientation="horizontal">
 
-                <com.foxtrotalpha.reelsblocker.ui.components.MetricCardView
-                    android:id="@+id/summarySteps"
+                <com.foxtrotalpha.reelsblocker.ui.components.ChartCardView
+                    android:id="@+id/stepsChartCard"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/space_sm"
                     android:layout_weight="1" />
 
-                <com.foxtrotalpha.reelsblocker.ui.components.MetricCardView
-                    android:id="@+id/summarySleep"
+                <com.foxtrotalpha.reelsblocker.ui.components.ChartCardView
+                    android:id="@+id/sleepChartCard"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/space_sm"
                     android:layout_weight="1" />
             </LinearLayout>
-
-            <com.foxtrotalpha.reelsblocker.ui.components.ChartCardView
-                android:id="@+id/stepsChartCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg" />
-
-            <com.foxtrotalpha.reelsblocker.ui.components.ChartCardView
-                android:id="@+id/screenChartCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg" />
-
-            <com.foxtrotalpha.reelsblocker.ui.components.ChartCardView
-                android:id="@+id/blocksChartCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg" />
-
-            <com.foxtrotalpha.reelsblocker.ui.components.ChartCardView
-                android:id="@+id/sleepChartCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/appsCard"

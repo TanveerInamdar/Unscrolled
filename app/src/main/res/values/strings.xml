@@ -68,6 +68,7 @@
     <string name="status_service_on">Accessibility service enabled</string>
 
     <string name="toggle_blocking">Enable Reels blocking</string>
+    <string name="toggle_voice_roast">Voice roast audio</string>
     <string name="open_accessibility_settings">Open Accessibility Settings</string>
     <string name="open_usage_access_settings">Grant Usage Access</string>
     <string name="status_usage_on">Usage access granted</string>

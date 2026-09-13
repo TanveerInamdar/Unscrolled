@@ -29,6 +29,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val healthConnectAvailable = MutableStateFlow(false)
     private val serviceEnabled = MutableStateFlow(false)
     private val blockingEnabled = MutableStateFlow(true)
+    private val voiceRoastEnabled = MutableStateFlow(true)
 
     private val todayIso = MutableStateFlow(LocalDate.now(zone).toString())
 
@@ -71,19 +72,27 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    private val protectionData = combine(
+        serviceEnabled,
+        blockingEnabled,
+        voiceRoastEnabled,
+    ) { serviceOn, blockingOn, voiceOn ->
+        Triple(serviceOn, blockingOn, voiceOn)
+    }
+
     private val permissionData = combine(
         healthPermissionGranted,
         calendarPermissionGranted,
         healthConnectAvailable,
-        serviceEnabled,
-        blockingEnabled,
-    ) { healthGranted, calendarGranted, hcAvailable, serviceOn, blockingOn ->
+        protectionData,
+    ) { healthGranted, calendarGranted, hcAvailable, protection ->
         PermissionData(
             healthGranted = healthGranted,
             calendarGranted = calendarGranted,
             hcAvailable = hcAvailable,
-            serviceEnabled = serviceOn,
-            blockingEnabled = blockingOn,
+            serviceEnabled = protection.first,
+            blockingEnabled = protection.second,
+            voiceRoastEnabled = protection.third,
         )
     }
 
@@ -107,9 +116,14 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         healthConnectAvailable.value = available
     }
 
-    fun setFocusProtectionState(serviceEnabled: Boolean, blockingEnabled: Boolean) {
+    fun setFocusProtectionState(
+        serviceEnabled: Boolean,
+        blockingEnabled: Boolean,
+        voiceRoastEnabled: Boolean,
+    ) {
         this.serviceEnabled.value = serviceEnabled
         this.blockingEnabled.value = blockingEnabled
+        this.voiceRoastEnabled.value = voiceRoastEnabled
     }
 
     private fun buildState(
@@ -171,6 +185,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             hasSleepData = detail.sleepSessions.isNotEmpty(),
             serviceEnabled = permissions.serviceEnabled,
             blockingEnabled = permissions.blockingEnabled,
+            voiceRoastEnabled = permissions.voiceRoastEnabled,
         )
     }
 
@@ -211,5 +226,6 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         val hcAvailable: Boolean,
         val serviceEnabled: Boolean,
         val blockingEnabled: Boolean,
+        val voiceRoastEnabled: Boolean,
     )
 }

@@ -54,6 +54,18 @@ class TodayFragment : Fragment() {
                         ReelsBlockerService::class.java,
                     ),
                     blockingEnabled = enabled,
+                    voiceRoastEnabled = BlockerPreferences.isVoiceRoastEnabled(requireContext()),
+                )
+            },
+            onVoiceRoastToggled = { enabled ->
+                BlockerPreferences.setVoiceRoastEnabled(requireContext(), enabled)
+                dashboardViewModel.setFocusProtectionState(
+                    serviceEnabled = AccessibilityUtils.isServiceEnabled(
+                        requireContext(),
+                        ReelsBlockerService::class.java,
+                    ),
+                    blockingEnabled = BlockerPreferences.isBlockingEnabled(requireContext()),
+                    voiceRoastEnabled = enabled,
                 )
             },
         )

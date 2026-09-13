@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="zen_bg">#101815</color>
-    <color name="zen_surface">#17211B</color>
-    <color name="zen_surface_elevated">#1D2A23</color>
-    <color name="zen_surface_secondary">#24342A</color>
-    <color name="zen_sage">#A6C4A5</color>
-    <color name="zen_sage_soft">#8FAF96</color>
-    <color name="zen_gold">#D6AA6B</color>
-    <color name="zen_sleep">#7FA8A4</color>
-    <color name="zen_text_primary">#F0F2EB</color>
-    <color name="zen_text_secondary">#B6C1B8</color>
-    <color name="zen_text_tertiary">#89988D</color>
-    <color name="zen_divider">#34443A</color>
+    <color name="zen_bg">#0E1C18</color>
+    <color name="zen_surface">#15241E</color>
+    <color name="zen_surface_elevated">#1C3028</color>
+    <color name="zen_surface_secondary">#254338</color>
+    <color name="zen_sage">#73D9A2</color>
+    <color name="zen_sage_soft">#5FCB94</color>
+    <color name="zen_gold">#E8B85A</color>
+    <color name="zen_sleep">#78B8B0</color>
+    <color name="zen_text_primary">#F3F4EC</color>
+    <color name="zen_text_secondary">#A8C5B4</color>
+    <color name="zen_text_tertiary">#7C9A88</color>
+    <color name="zen_divider">#2E4A3E</color>
     <color name="zen_error">#C97B6A</color>
-    <color name="zen_on_sage">#101815</color>
-    <color name="zen_sage_container">#2A3D31</color>
-    <color name="zen_gold_muted">#3A3224</color>
-    <color name="zen_chart_fill">#33A6C4A5</color>
-    <color name="zen_gold_fill">#33D6AA6B</color>
+    <color name="zen_on_sage">#0E1C18</color>
+    <color name="zen_sage_container">#1E4536</color>
+    <color name="zen_gold_muted">#3E3420</color>
+    <color name="zen_chart_fill">#3373D9A2</color>
+    <color name="zen_gold_fill">#33E8B85A</color>
+    <color name="ic_launcher_background">#0E1C18</color>
 </resources>

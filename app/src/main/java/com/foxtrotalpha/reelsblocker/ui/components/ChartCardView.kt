@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import com.foxtrotalpha.reelsblocker.R
 import com.foxtrotalpha.reelsblocker.databinding.ViewChartCardBinding
 
 class ChartCardView @JvmOverloads constructor(
@@ -55,12 +56,17 @@ class ChartCardView @JvmOverloads constructor(
     }
 
     fun showEmpty(message: String, actionLabel: String? = null, onAction: (() -> Unit)? = null) {
-        binding.chartHeadline.visibility = View.GONE
-        binding.chartSubtitle.visibility = View.GONE
-        binding.chartSlot.visibility = View.GONE
+        binding.chartHeadline.visibility = View.VISIBLE
+        binding.chartHeadline.text = context.getString(R.string.metric_unavailable)
+        binding.chartSubtitle.visibility = View.VISIBLE
+        binding.chartSubtitle.text = message
+        binding.chartSlot.visibility = View.VISIBLE
         binding.chartExtraSlot.visibility = View.GONE
-        binding.chartEmptyState.visibility = View.VISIBLE
-        binding.chartEmptyState.bind(message = message, actionLabel = actionLabel, onAction = onAction)
+        binding.chartEmptyState.visibility = View.GONE
+        if (actionLabel != null && onAction != null) {
+            binding.chartEmptyState.visibility = View.VISIBLE
+            binding.chartEmptyState.bind(message = "", actionLabel = actionLabel, onAction = onAction)
+        }
     }
 
     fun emptyState(): EmptyStateView = binding.chartEmptyState

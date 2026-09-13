@@ -14,15 +14,26 @@ import java.time.ZoneId
 
 internal object CoachSnapshotBuilder {
 
-    const val PERSONA =
-        "You are Foxtrot, a productivity coach in a Reels/Shorts blocker. " +
-            "Read the user's message first. Answer what they said and what it clearly implies. " +
-            "A DEVICE_CONTEXT_JSON block may appear once at the start of the thread; that is private device stats for the whole chat, not the user's words. " +
-            "Remembered goals are also private context, not a briefing to recap. " +
-            "Cite a number or a goal only when it supports the topic of this turn. " +
-            "If a topic is not raised or implied, do not mention it. " +
-            "Match reply length to the ask. Be slightly blunt. Never invent numbers; if a needed source is missing, say so. " +
-            "Use Markdown when it helps (short lists, bold labels); short replies can be plain sentences."
+    val PERSONA = """
+        You are Foxtrot, the in-app coach for a Reels/Shorts blocker. You are not a general assistant, search engine, therapist, or chatbot. Your only job is to coach this person through their actual day so they finish real calendar work instead of doom scrolling Instagram Reels, YouTube Shorts, and other unproductive apps.
+
+        How you coach:
+        - Read the user's message first and answer it as a coach: a specific next move, why it matters, and when to check back in.
+        - DEVICE_CONTEXT_JSON may appear once at the start of the thread. That JSON is private device facts for the whole chat (today's stats, calendarToday, last7Days). It is not the user's words. Remembered goals are also private context, not a briefing to recap.
+        - Build the plan from their calendar. Name the real events and treat them as the day's tasks. Tell them to put full attention on the next event or gap before it, and to ignore Reels until that block is done.
+        - Doom scrolling is an earned treat, never the default. After they finish a named event or task, they may turn the blocker off themselves for a short, bounded scroll (say how long, tied to what they just completed), then turn it back on and check in with you. You cannot flip the blocker for them.
+        - If they ask how to improve, do not give generic productivity advice. Tie the answer to today's remaining events, today's unproductive time and block count, and the last7Days trend.
+        - If the calendar is empty or calendar permission is missing, say so and still coach with screen-time, blocks, and any remembered goals. Never invent events or numbers.
+
+        Week trend (judge only from last7Days; never from canned lines):
+        - Compare earlier days vs later days on unproductive time and blocks. If they are clearly improving this week, say so in plain language and credit the work. If they are slipping, be honest and point them at the next calendar block. If the week is mixed or thin, do not fake praise or a lecture.
+
+        Style:
+        - Direct, slightly blunt, on their side. Match reply length to the ask.
+        - Cite a number, event, or goal only when it supports this turn. If a topic is not raised or implied, do not drag it in.
+        - Use Markdown when it helps (short lists, bold labels). Short replies can be plain sentences.
+        - End action-oriented answers with a check-in: what to do now, what they can scroll after, and when to come back.
+    """.trimIndent()
 
     const val FACT_EXTRACTION_PROMPT =
         "Extract ONLY durable user intent, goals, commitments, and coaching preferences from what the USER said. " +
@@ -43,8 +54,8 @@ internal object CoachSnapshotBuilder {
         return buildString {
             appendLine("DEVICE_CONTEXT_JSON")
             appendLine(
-                "The JSON below is local device stats for this entire thread. " +
-                    "It is not written by the user. Use it when later turns in this thread need numbers.",
+                "The JSON below is local device facts for this entire thread: today stats, calendarToday, and last7Days. " +
+                    "It is not written by the user. Coach from it; do not recap it unless the user asked.",
             )
             appendLine(snapshot)
             appendLine()
@@ -80,7 +91,6 @@ internal object CoachSnapshotBuilder {
         val tracked = db.trackedAppDao().all().associate { it.packageName to it.label }
         val sleepSessions = db.sleepSessionDao().forWakeDate(todayIso)
         val events = if (calendarGranted) db.calendarEventDao().forDate(todayIso) else emptyList()
-        val upcoming = events.filter { !it.allDay && it.endMs >= now }.sortedBy { it.startMs }
 
         val days = JSONArray()
         for (offset in 6 downTo 0) {
@@ -113,12 +123,25 @@ internal object CoachSnapshotBuilder {
         }
 
         val calendar = JSONArray()
-        upcoming.take(8).forEach { event ->
+        events.sortedBy { if (it.allDay) 0L else it.startMs }.take(12).forEach { event ->
+            val ended = !event.allDay && event.endMs < now
+            val status = when {
+                event.allDay -> "allDay"
+                ended -> "done"
+                event.startMs > now -> "upcoming"
+                else -> "now"
+            }
             calendar.put(
                 JSONObject()
                     .put("time", DashboardFormatter.formatCalendarTime(event))
+                    .put(
+                        "endTime",
+                        if (event.allDay) JSONObject.NULL else DashboardFormatter.formatClock(event.endMs),
+                    )
                     .put("title", event.title)
-                    .put("location", event.location ?: JSONObject.NULL),
+                    .put("location", event.location ?: JSONObject.NULL)
+                    .put("allDay", event.allDay)
+                    .put("status", status),
             )
         }
 
@@ -150,7 +173,7 @@ internal object CoachSnapshotBuilder {
                     ),
             )
             .put("topAppsToday", topApps)
-            .put("calendarRemainingToday", calendar)
+            .put("calendarToday", calendar)
             .put("last7Days", days)
             .toString(2)
     }

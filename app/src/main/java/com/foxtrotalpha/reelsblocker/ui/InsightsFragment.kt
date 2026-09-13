@@ -17,7 +17,9 @@ import com.foxtrotalpha.reelsblocker.R
 import com.foxtrotalpha.reelsblocker.databinding.FragmentInsightsBinding
 import com.foxtrotalpha.reelsblocker.databinding.ItemAppUsageRowBinding
 import com.foxtrotalpha.reelsblocker.ui.chart.BarChartView
+import com.foxtrotalpha.reelsblocker.ui.chart.ChartPoint
 import com.foxtrotalpha.reelsblocker.ui.chart.LineChartView
+import com.foxtrotalpha.reelsblocker.ui.components.ChartCardView
 import kotlinx.coroutines.launch
 
 class InsightsFragment : Fragment() {
@@ -47,23 +49,27 @@ class InsightsFragment : Fragment() {
 
         stepsChart = BarChartView(requireContext()).apply {
             barColor = ContextCompat.getColor(requireContext(), R.color.zen_sage)
+            setSparkline(true)
         }
         screenChart = LineChartView(requireContext()).apply {
             lineColor = ContextCompat.getColor(requireContext(), R.color.zen_gold)
+            setSparkline(true)
         }
         blocksChart = BarChartView(requireContext()).apply {
             barColor = ContextCompat.getColor(requireContext(), R.color.zen_sage_soft)
+            setSparkline(true)
         }
         sleepChart = BarChartView(requireContext()).apply {
             barColor = ContextCompat.getColor(requireContext(), R.color.zen_sleep)
+            setSparkline(true)
         }
 
-        binding.stepsChartCard.setTitle(getString(R.string.dashboard_section_steps))
-        binding.stepsChartCard.setChart(stepsChart)
-        binding.screenChartCard.setTitle(getString(R.string.insights_screen_title))
+        binding.screenChartCard.setTitle(getString(R.string.metric_screen_time))
         binding.screenChartCard.setChart(screenChart)
         binding.blocksChartCard.setTitle(getString(R.string.insights_blocks_title))
         binding.blocksChartCard.setChart(blocksChart)
+        binding.stepsChartCard.setTitle(getString(R.string.dashboard_section_steps))
+        binding.stepsChartCard.setChart(stepsChart)
         binding.sleepChartCard.setTitle(getString(R.string.sleep_title))
         binding.sleepChartCard.setChart(sleepChart)
 
@@ -85,7 +91,7 @@ class InsightsFragment : Fragment() {
                     }
                 }
                 launch {
-                    insightsViewModel.state.collect { bind(it, host) }
+                insightsViewModel.state.collect { bind(it) }
                 }
             }
         }
@@ -96,123 +102,71 @@ class InsightsFragment : Fragment() {
         insightsViewModel.refreshForToday()
     }
 
-    private fun bind(state: InsightsState, host: MainActivity) {
+    private fun bind(state: InsightsState) {
         val healthNeeded = state.healthConnectAvailable && !state.healthPermissionGranted
-        binding.summaryScreen.bind(
-            icon = R.drawable.ic_screen_time,
-            value = DashboardFormatter.formatDurationMs(state.totalUnproductiveMs),
-            label = getString(R.string.insights_summary_unproductive),
-            comparison = state.unproductiveDelta?.text,
-            available = true,
-        )
-        binding.summaryBlocks.bind(
-            icon = R.drawable.ic_shield,
-            value = state.totalBlocks.toString(),
-            label = getString(R.string.insights_summary_blocks),
-            comparison = state.blocksDelta?.text,
-            available = true,
-        )
-        binding.summarySteps.bind(
-            icon = R.drawable.ic_footprints,
-            value = DashboardFormatter.formatSteps(state.averageSteps),
-            label = getString(R.string.insights_summary_steps),
-            comparison = state.stepsDelta?.text,
-            available = state.averageSteps != null && !healthNeeded,
-        )
-        binding.summarySleep.bind(
-            icon = R.drawable.ic_moon,
-            value = state.averageSleepMs?.let { DashboardFormatter.formatDurationMs(it) }.orEmpty(),
-            label = getString(R.string.insights_summary_sleep),
-            comparison = state.sleepDelta?.text,
-            available = state.averageSleepMs != null && !healthNeeded,
-        )
 
-        bindChart(
-            card = binding.stepsChartCard,
-            chart = { stepsChart.setPoints(state.stepPoints) },
-            hasData = state.hasStepData,
-            headline = state.averageSteps?.let { getString(R.string.insights_avg_steps, DashboardFormatter.formatSteps(it)) },
-            healthNeeded = healthNeeded,
-            host = host,
-        )
-        bindChart(
+        bindTile(
             card = binding.screenChartCard,
-            chart = { screenChart.setPoints(state.screenPoints) },
+            chart = { screenChart.setPoints(state.screenPoints.ifEmpty { zeroWeek() }) },
+            value = DashboardFormatter.formatDurationMs(state.totalUnproductiveMs),
+            subtitle = state.unproductiveDelta?.text,
             hasData = state.hasScreenData,
-            headline = getString(
-                R.string.insights_avg_screen,
-                DashboardFormatter.formatDurationMs(state.totalUnproductiveMs / 7),
-            ).takeIf { state.hasScreenData },
             healthNeeded = false,
-            host = host,
         )
-        bindChart(
+        bindTile(
             card = binding.blocksChartCard,
-            chart = { blocksChart.setPoints(state.blockPoints) },
+            chart = { blocksChart.setPoints(state.blockPoints.ifEmpty { zeroWeek() }) },
+            value = state.totalBlocks.toString(),
+            subtitle = state.blocksDelta?.text,
             hasData = state.hasBlockData,
-            headline = getString(R.string.insights_total_blocks, state.totalBlocks).takeIf { state.hasBlockData },
             healthNeeded = false,
-            host = host,
         )
-        bindBlocksBreakdown(state)
-        bindChart(
-            card = binding.sleepChartCard,
-            chart = { sleepChart.setPoints(state.sleepPoints) },
-            hasData = state.hasSleepData,
-            headline = state.averageSleepMs?.let {
-                getString(R.string.insights_avg_sleep, DashboardFormatter.formatDurationMs(it))
-            },
+        bindTile(
+            card = binding.stepsChartCard,
+            chart = { stepsChart.setPoints(state.stepPoints.ifEmpty { zeroWeek() }) },
+            value = DashboardFormatter.formatSteps(state.averageSteps),
+            subtitle = state.stepsDelta?.text,
+            hasData = state.hasStepData,
             healthNeeded = healthNeeded,
-            host = host,
+        )
+        bindTile(
+            card = binding.sleepChartCard,
+            chart = { sleepChart.setPoints(state.sleepPoints.ifEmpty { zeroWeek() }) },
+            value = state.averageSleepMs?.let { DashboardFormatter.formatDurationMs(it) }
+                ?: getString(R.string.metric_unavailable),
+            subtitle = state.sleepDelta?.text,
+            hasData = state.hasSleepData,
+            healthNeeded = healthNeeded,
         )
         bindApps(state)
     }
 
-    private fun bindChart(
-        card: com.foxtrotalpha.reelsblocker.ui.components.ChartCardView,
+    private fun bindTile(
+        card: ChartCardView,
         chart: () -> Unit,
+        value: String,
+        subtitle: String?,
         hasData: Boolean,
-        headline: String?,
         healthNeeded: Boolean,
-        host: MainActivity,
     ) {
         if (healthNeeded) {
-            card.showEmpty(
-                message = getString(R.string.dashboard_steps_permission),
-                actionLabel = getString(R.string.request_health_permissions),
-                onAction = { host.requestHealthConnectPermissions() },
-            )
+            card.showEmpty(getString(R.string.dashboard_steps_permission))
+            chart()
             return
         }
         if (!hasData) {
             card.showEmpty(getString(R.string.insights_keep_using))
+            chart()
             return
         }
         card.showContent()
-        card.setHeadline(headline)
+        card.setHeadline(value)
+        card.setSubtitle(subtitle)
         chart()
     }
 
-    private fun bindBlocksBreakdown(state: InsightsState) {
-        val extra = binding.blocksChartCard.extraSlot()
-        extra.removeAllViews()
-        if (!state.hasBlockData || state.blocksByApp.isEmpty()) {
-            extra.visibility = View.GONE
-            return
-        }
-        extra.visibility = View.VISIBLE
-        val inflater = LayoutInflater.from(requireContext())
-        state.blocksByApp.take(4).forEach { row ->
-            val rowBinding = ItemAppUsageRowBinding.inflate(inflater, extra, false)
-            rowBinding.appNameText.text = row.label
-            rowBinding.appDurationText.text = row.totalMs.toInt().toString()
-            rowBinding.appUsageFill.layoutParams = LinearLayout.LayoutParams(
-                0,
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                row.fraction.coerceIn(0.08f, 1f),
-            )
-            extra.addView(rowBinding.root)
-        }
+    private fun zeroWeek(): List<ChartPoint> {
+        return listOf("M", "T", "W", "T", "F", "S", "S").map { ChartPoint(it, 0f) }
     }
 
     private fun bindApps(state: InsightsState) {

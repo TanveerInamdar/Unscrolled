@@ -23,10 +23,12 @@ class StatusCardView @JvmOverloads constructor(
         enabled: Boolean,
         switchChecked: Boolean,
         switchLabel: String,
+        voiceRoastChecked: Boolean = true,
         warning: String? = null,
         actionLabel: String? = null,
         @DrawableRes icon: Int = R.drawable.ic_shield,
         onCheckedChange: ((Boolean) -> Unit)? = null,
+        onVoiceRoastCheckedChange: ((Boolean) -> Unit)? = null,
         onAction: (() -> Unit)? = null,
     ) {
         binding.statusIcon.setImageResource(icon)
@@ -37,6 +39,12 @@ class StatusCardView @JvmOverloads constructor(
         binding.statusSwitch.isChecked = switchChecked
         binding.statusSwitch.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
             onCheckedChange?.invoke(isChecked)
+        }
+
+        binding.voiceRoastSwitch.setOnCheckedChangeListener(null)
+        binding.voiceRoastSwitch.isChecked = voiceRoastChecked
+        binding.voiceRoastSwitch.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+            onVoiceRoastCheckedChange?.invoke(isChecked)
         }
 
         binding.statusPill.text = if (enabled) {

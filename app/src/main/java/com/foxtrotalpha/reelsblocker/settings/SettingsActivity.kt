@@ -42,6 +42,10 @@ class SettingsActivity : AppCompatActivity() {
         binding.settingsBlockingSwitch.setOnCheckedChangeListener { _, isChecked ->
             BlockerPreferences.setBlockingEnabled(this, isChecked)
         }
+        binding.settingsVoiceRoastSwitch.isChecked = BlockerPreferences.isVoiceRoastEnabled(this)
+        binding.settingsVoiceRoastSwitch.setOnCheckedChangeListener { _, isChecked ->
+            BlockerPreferences.setVoiceRoastEnabled(this, isChecked)
+        }
         binding.settingsOpenAccessibility.setOnClickListener {
             AccessibilityUtils.openAccessibilitySettings(this)
         }

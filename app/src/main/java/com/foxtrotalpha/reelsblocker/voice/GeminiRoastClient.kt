@@ -33,7 +33,7 @@ internal class GeminiRoastClient(
                 "generationConfig",
                 JSONObject()
                     .put("temperature", 1.05)
-                    .put("maxOutputTokens", 40),
+                    .put("maxOutputTokens", 56),
             )
 
         val request = Request.Builder()
@@ -84,7 +84,11 @@ internal class GeminiRoastClient(
 
         private const val SYSTEM_PROMPT =
             "You write one spoken line for a phone that just blocked a short-form video. " +
-                "Slightly rude, curt, quirky, a bit mean, and funny. Maximum twelve words. " +
+                "Be hurtful and insulting, not cute. Roast the listener as an idiot or a dummy " +
+                "while still hitting the assigned roast angle. You should use words like idiot, " +
+                "stupid, dummy, and phrases like what the hell are you doing, along with the actual roast. " +
+                "No slurs. No curse words. Hell is allowed only in what the hell. " +
+                "Curt, quirky, mean, and funny. Maximum eighteen words. " +
                 "No quotes, no emoji, no hashtags. Write numbers as words. Output only the line. " +
                 "Use only the assigned roast angle. Unless the angle is step count, " +
                 "do not mention steps, walking, or grass."

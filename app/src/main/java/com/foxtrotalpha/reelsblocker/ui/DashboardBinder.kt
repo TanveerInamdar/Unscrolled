@@ -14,6 +14,7 @@ class DashboardBinder(
     private val onRequestCalendarPermission: () -> Unit,
     private val onOpenAccessibilitySettings: () -> Unit,
     private val onBlockingToggled: (Boolean) -> Unit,
+    private val onVoiceRoastToggled: (Boolean) -> Unit,
 ) {
 
     fun bind(state: DashboardState) {
@@ -74,6 +75,7 @@ class DashboardBinder(
             enabled = fullyOn,
             switchChecked = state.blockingEnabled,
             switchLabel = context.getString(R.string.toggle_blocking),
+            voiceRoastChecked = state.voiceRoastEnabled,
             warning = if (!state.serviceEnabled) {
                 context.getString(R.string.focus_protection_service_off)
             } else {
@@ -85,6 +87,7 @@ class DashboardBinder(
                 null
             },
             onCheckedChange = onBlockingToggled,
+            onVoiceRoastCheckedChange = onVoiceRoastToggled,
             onAction = onOpenAccessibilitySettings,
         )
     }

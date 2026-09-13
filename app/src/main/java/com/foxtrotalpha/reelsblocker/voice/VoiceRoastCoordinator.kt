@@ -2,6 +2,7 @@ package com.foxtrotalpha.reelsblocker.voice
 
 import android.content.Context
 import android.util.Log
+import com.foxtrotalpha.reelsblocker.BlockerPreferences
 import com.foxtrotalpha.reelsblocker.detector.ReelsDetector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -30,6 +31,10 @@ object VoiceRoastCoordinator {
         packageName: String,
         reason: ReelsDetector.Result.Reason?,
     ) {
+        if (!BlockerPreferences.isVoiceRoastEnabled(context)) {
+            Log.d(TAG, "Voice roast skipped: audio toggle is off")
+            return
+        }
         if (!ApiKeys.isConfigured) {
             Log.w(TAG, "Voice roast skipped: API keys are empty in this install")
             return
