@@ -59,6 +59,11 @@ interface SleepSessionDao {
     @Query("SELECT * FROM sleep_sessions WHERE date = :date ORDER BY duration_ms DESC")
     suspend fun forWakeDate(date: String): List<SleepSession>
 
+    @Query(
+        "SELECT * FROM sleep_sessions WHERE date BETWEEN :fromDate AND :toDate ORDER BY date ASC",
+    )
+    fun observeBetween(fromDate: String, toDate: String): Flow<List<SleepSession>>
+
     @Query("DELETE FROM sleep_sessions WHERE wake_ms BETWEEN :fromWakeMs AND :toWakeMs")
     suspend fun deleteWakeRange(fromWakeMs: Long, toWakeMs: Long)
 

@@ -1,7 +1,6 @@
 package com.foxtrotalpha.reelsblocker.ui
 
 import com.foxtrotalpha.reelsblocker.data.CalendarEvent
-import com.foxtrotalpha.reelsblocker.data.DailyAppUsage
 
 data class WeekBar(
     val date: String,
@@ -18,6 +17,8 @@ data class ScreenTimeRow(
 
 data class DashboardState(
     val todayDateLabel: String = "",
+    val greeting: String = "",
+    val heroSummary: String = "",
     val blocksToday: Int = 0,
     val stepsToday: Long? = null,
     val activeCaloriesToday: Double? = null,
@@ -26,6 +27,9 @@ data class DashboardState(
     val weekUnproductiveBars: List<WeekBar> = emptyList(),
     val topAppsToday: List<ScreenTimeRow> = emptyList(),
     val sleepSummary: String? = null,
+    val sleepBedtime: String? = null,
+    val sleepWake: String? = null,
+    val sleepDurationMs: Long? = null,
     val calendarEvents: List<CalendarEvent> = emptyList(),
     val calendarOverflowCount: Int = 0,
     val healthConnectAvailable: Boolean = false,
@@ -33,4 +37,6 @@ data class DashboardState(
     val calendarPermissionGranted: Boolean = false,
     val hasStepData: Boolean = false,
     val hasSleepData: Boolean = false,
+    val serviceEnabled: Boolean = false,
+    val blockingEnabled: Boolean = true,
 )

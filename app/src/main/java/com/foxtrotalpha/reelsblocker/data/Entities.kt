@@ -87,3 +87,19 @@ data class DailyBlockTotal(
     @ColumnInfo(name = "total")
     val total: Int,
 )
+
+data class AppBlockTotal(
+    @ColumnInfo(name = "package_name")
+    val packageName: String,
+
+    @ColumnInfo(name = "total")
+    val total: Int,
+)
+
+data class AppUsageTotal(
+    @ColumnInfo(name = "package_name")
+    val packageName: String,
+
+    @ColumnInfo(name = "total_ms")
+    val totalMs: Long,
+)

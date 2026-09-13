@@ -15,7 +15,7 @@
         android:background="@drawable/bg_bubble_assistant"
         android:paddingHorizontal="14dp"
         android:paddingVertical="10dp"
-        android:textColor="@color/on_surface"
-        android:textSize="15sp"
+        android:textAppearance="@style/TextAppearance.Zen.Body"
+        android:textColor="@color/zen_text_primary"
         android:textIsSelectable="true" />
 </FrameLayout>

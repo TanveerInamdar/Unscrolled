@@ -3,41 +3,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingVertical="8dp">
+    android:orientation="horizontal"
+    android:paddingVertical="@dimen/space_sm">
+
+    <TextView
+        android:id="@+id/eventTimeText"
+        android:layout_width="72dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Zen.Caption"
+        android:textColor="@color/zen_text_secondary"
+        tools:text="2:00 PM" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/space_sm">
 
-        <TextView
-            android:id="@+id/eventTimeText"
-            android:layout_width="88dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/dashboard_text_secondary"
-            android:textSize="13sp"
-            tools:text="2:00 PM" />
+        <View
+            android:layout_width="@dimen/timeline_dot"
+            android:layout_height="@dimen/timeline_dot"
+            android:background="@drawable/bg_timeline_dot" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/zen_divider" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/eventTitleText"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="@color/dashboard_text_primary"
-            android:textSize="14sp"
-            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.Zen.SectionTitle"
+            android:textSize="15sp"
             tools:text="Team standup" />
+
+        <TextView
+            android:id="@+id/eventLocationText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.Zen.Caption"
+            tools:text="Conference room" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/eventLocationText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
-        android:layout_marginTop="2dp"
-        android:textColor="@color/dashboard_text_secondary"
-        android:textSize="12sp"
-        tools:text="Conference room" />
-
 </LinearLayout>

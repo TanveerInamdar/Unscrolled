@@ -3,29 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface"
-    android:padding="24dp">
+    android:background="@color/zen_bg"
+    android:padding="@dimen/screen_padding">
+
+    <ImageView
+        android:id="@+id/rationaleIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_leaf"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/rationaleTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
         android:text="@string/health_permissions_rationale_title"
-        android:textColor="@color/on_surface"
-        android:textSize="22sp"
-        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.Zen.Title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/rationaleIcon" />
 
     <TextView
         android:id="@+id/rationaleBody"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/space_md"
         android:text="@string/health_permissions_rationale_body"
-        android:textColor="@color/on_surface_variant"
-        android:textSize="15sp"
+        android:textAppearance="@style/TextAppearance.Zen.Body"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rationaleTitle" />

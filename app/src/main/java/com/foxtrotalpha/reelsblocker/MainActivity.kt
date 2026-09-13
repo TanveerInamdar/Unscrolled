@@ -5,23 +5,22 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.health.connect.client.HealthConnectClient
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import android.content.Intent
 import com.foxtrotalpha.reelsblocker.calendar.CalendarAccessUtils
-import com.foxtrotalpha.reelsblocker.coach.CoachActivity
+import com.foxtrotalpha.reelsblocker.coach.CoachFragment
 import com.foxtrotalpha.reelsblocker.data.IntegrationSync
 import com.foxtrotalpha.reelsblocker.databinding.ActivityMainBinding
 import com.foxtrotalpha.reelsblocker.health.HealthConnectPermissions
-import com.foxtrotalpha.reelsblocker.ui.DashboardBinder
 import com.foxtrotalpha.reelsblocker.ui.DashboardViewModel
+import com.foxtrotalpha.reelsblocker.ui.InsightsFragment
+import com.foxtrotalpha.reelsblocker.ui.TodayFragment
 import com.foxtrotalpha.reelsblocker.usage.ScreenTimeSync
 import com.foxtrotalpha.reelsblocker.usage.UsageAccessUtils
 import kotlinx.coroutines.launch
@@ -31,7 +30,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var mainContentInitialized = false
     private val dashboardViewModel: DashboardViewModel by viewModels()
-    private lateinit var dashboardBinder: DashboardBinder
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -50,11 +48,23 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dashboardBinder = DashboardBinder(
-            context = this,
-            binding = binding,
-            onRequestHealthPermissions = { requestHealthConnectPermissions() },
-            onRequestCalendarPermission = { requestCalendarPermission() },
+        binding.usageAccessGate.enableUsageAccessButton.setOnClickListener {
+            UsageAccessUtils.openUsageAccessSettings(this)
+        }
+
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (binding.bottomNav.selectedItemId != R.id.navToday) {
+                        selectTab(R.id.navToday)
+                    } else {
+                        isEnabled = false
+                        onBackPressedDispatcher.onBackPressed()
+                        isEnabled = true
+                    }
+                }
+            },
         )
 
         requestNotificationPermissionIfNeeded()
@@ -63,57 +73,104 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        dashboardViewModel.refreshForToday()
         updateUsageAccessUi()
         refreshDashboardPermissions()
+        refreshFocusProtection()
+    }
+
+    fun requestHealthConnectPermissions() {
+        if (!HealthConnectPermissions.isHealthConnectAvailable(this)) {
+            return
+        }
+        healthConnectPermissionLauncher.launch(HealthConnectPermissions.requiredPermissions())
+    }
+
+    fun requestCalendarPermission() {
+        readCalendarPermissionLauncher.launch(Manifest.permission.READ_CALENDAR)
+    }
+
+    fun selectTab(itemId: Int) {
+        binding.bottomNav.selectedItemId = itemId
+    }
+
+    suspend fun syncAllSources() {
+        ScreenTimeSync.syncAllOnStartup(applicationContext)
+        IntegrationSync.syncOnStartup(applicationContext)
+        refreshDashboardPermissions()
+        refreshFocusProtection()
     }
 
     private fun updateUsageAccessUi() {
         val usageAccessGranted = UsageAccessUtils.hasUsageAccess(this)
 
         if (!usageAccessGranted) {
-            binding.blankScreen.visibility = View.VISIBLE
-            binding.mainContent.visibility = View.GONE
+            binding.usageAccessGate.root.visibility = View.VISIBLE
+            binding.mainShell.visibility = View.GONE
             return
         }
 
-        binding.blankScreen.visibility = View.GONE
-        binding.mainContent.visibility = View.VISIBLE
+        binding.usageAccessGate.root.visibility = View.GONE
+        binding.mainShell.visibility = View.VISIBLE
 
         if (!mainContentInitialized) {
             setupMainContent()
             mainContentInitialized = true
         }
 
-        refreshStatus()
+        refreshFocusProtection()
         syncScreenTimeOnStartup()
         syncIntegrationsOnStartup()
     }
 
     private fun setupMainContent() {
-        binding.blockingSwitch.isChecked = BlockerPreferences.isBlockingEnabled(this)
-        binding.blockingSwitch.setOnCheckedChangeListener { _, isChecked ->
-            BlockerPreferences.setBlockingEnabled(this, isChecked)
-            refreshStatus()
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            showTab(item.itemId)
+            true
         }
-
-        binding.openSettingsButton.setOnClickListener {
-            AccessibilityUtils.openAccessibilitySettings(this)
+        if (supportFragmentManager.findFragmentByTag(TAG_TODAY) == null) {
+            showTab(R.id.navToday)
+        } else {
+            binding.bottomNav.selectedItemId = currentVisibleTab()
         }
-
-        binding.coachChatButton.setOnClickListener {
-            startActivity(Intent(this, CoachActivity::class.java))
-        }
-
-        setupDashboard()
     }
 
-    private fun setupDashboard() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                dashboardViewModel.state.collect { state ->
-                    dashboardBinder.bind(state)
-                }
-            }
+    private fun showTab(itemId: Int) {
+        val transaction = supportFragmentManager.beginTransaction()
+        listOf(TAG_TODAY, TAG_COACH, TAG_INSIGHTS).forEach { tag ->
+            supportFragmentManager.findFragmentByTag(tag)?.let { transaction.hide(it) }
+        }
+        val tag = tagFor(itemId)
+        val existing = supportFragmentManager.findFragmentByTag(tag)
+        if (existing == null) {
+            transaction.add(R.id.tabContainer, createFragment(itemId), tag)
+        } else {
+            transaction.show(existing)
+        }
+        transaction.commit()
+    }
+
+    private fun createFragment(itemId: Int): Fragment {
+        return when (itemId) {
+            R.id.navCoach -> CoachFragment()
+            R.id.navInsights -> InsightsFragment()
+            else -> TodayFragment()
+        }
+    }
+
+    private fun tagFor(itemId: Int): String {
+        return when (itemId) {
+            R.id.navCoach -> TAG_COACH
+            R.id.navInsights -> TAG_INSIGHTS
+            else -> TAG_TODAY
+        }
+    }
+
+    private fun currentVisibleTab(): Int {
+        return when {
+            supportFragmentManager.findFragmentByTag(TAG_COACH)?.isVisible == true -> R.id.navCoach
+            supportFragmentManager.findFragmentByTag(TAG_INSIGHTS)?.isVisible == true -> R.id.navInsights
+            else -> R.id.navToday
         }
     }
 
@@ -137,6 +194,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun refreshFocusProtection() {
+        dashboardViewModel.setFocusProtectionState(
+            serviceEnabled = AccessibilityUtils.isServiceEnabled(this, ReelsBlockerService::class.java),
+            blockingEnabled = BlockerPreferences.isBlockingEnabled(this),
+        )
+    }
+
     private fun syncScreenTimeOnStartup() {
         lifecycleScope.launch {
             ScreenTimeSync.syncAllOnStartup(applicationContext)
@@ -149,44 +213,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun requestHealthConnectPermissions() {
-        if (!HealthConnectPermissions.isHealthConnectAvailable(this)) {
-            return
-        }
-        healthConnectPermissionLauncher.launch(HealthConnectPermissions.requiredPermissions())
-    }
-
-    private fun requestCalendarPermission() {
-        readCalendarPermissionLauncher.launch(Manifest.permission.READ_CALENDAR)
-    }
-
-    private fun refreshStatus() {
-        val serviceEnabled = AccessibilityUtils.isServiceEnabled(this, ReelsBlockerService::class.java)
-        val blockingEnabled = BlockerPreferences.isBlockingEnabled(this)
-
-        binding.serviceStatusText.text = if (serviceEnabled) {
-            getString(R.string.status_service_on)
-        } else {
-            getString(R.string.status_service_off)
-        }
-
-        binding.blockingStatusText.text = when {
-            !serviceEnabled -> getString(R.string.status_service_off)
-            blockingEnabled -> getString(R.string.status_enabled)
-            else -> getString(R.string.status_disabled)
-        }
-
-        val statusColor = when {
-            serviceEnabled && blockingEnabled -> R.color.success
-            serviceEnabled -> R.color.warning
-            else -> R.color.warning
-        }
-
-        binding.blockingStatusText.setTextColor(
-            ContextCompat.getColor(this, statusColor),
-        )
-    }
-
     private fun requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             return
@@ -197,5 +223,11 @@ class MainActivity : AppCompatActivity() {
         ) {
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
+    }
+
+    companion object {
+        const val TAG_TODAY = "tab_today"
+        const val TAG_COACH = "tab_coach"
+        const val TAG_INSIGHTS = "tab_insights"
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.foxtrotalpha.reelsblocker.R
 import io.noties.markwon.Markwon
@@ -16,9 +17,22 @@ internal class CoachMessageAdapter(
     private val markwon = Markwon.create(context.applicationContext)
 
     fun submit(messages: List<CoachChatMessage>) {
+        val old = items.toList()
+        val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int = old.size
+            override fun getNewListSize(): Int = messages.size
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                val previous = old[oldItemPosition]
+                val next = messages[newItemPosition]
+                return previous.role == next.role && previous.text == next.text
+            }
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return old[oldItemPosition] == messages[newItemPosition]
+            }
+        })
         items.clear()
         items.addAll(messages)
-        notifyDataSetChanged()
+        diff.dispatchUpdatesTo(this)
     }
 
     override fun getItemViewType(position: Int): Int {

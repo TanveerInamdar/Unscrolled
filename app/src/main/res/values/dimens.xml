@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_sm">8dp</dimen>
+    <dimen name="space_md">12dp</dimen>
+    <dimen name="space_lg">16dp</dimen>
+    <dimen name="space_xl">20dp</dimen>
+    <dimen name="space_xxl">32dp</dimen>
+    <dimen name="screen_padding">20dp</dimen>
+    <dimen name="card_radius">20dp</dimen>
+    <dimen name="card_padding">20dp</dimen>
+    <dimen name="metric_card_radius">16dp</dimen>
+    <dimen name="chart_height">140dp</dimen>
+    <dimen name="sparkline_height">72dp</dimen>
+    <dimen name="metric_tile_min_height">188dp</dimen>
+    <dimen name="touch_target">48dp</dimen>
+    <dimen name="bottom_nav_height">72dp</dimen>
+    <dimen name="composer_radius">28dp</dimen>
+    <dimen name="status_pill_radius">12dp</dimen>
+    <dimen name="usage_bar_height">8dp</dimen>
+    <dimen name="timeline_dot">8dp</dimen>
+</resources>

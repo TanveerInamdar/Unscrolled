@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/zen_bg"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/settingsToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/zen_bg"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="@string/settings_title"
+        app:titleTextColor="@color/zen_text_primary" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/screen_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_section_focus"
+                android:textAppearance="@style/TextAppearance.Zen.Label.Overline" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Zen.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/settingsBlockingSwitch"
+                        style="@style/Widget.Zen.Switch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/toggle_blocking"
+                        android:textColor="@color/zen_text_primary" />
+
+                    <TextView
+                        android:id="@+id/settingsAccessibilityStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:textAppearance="@style/TextAppearance.Zen.Body" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/settingsOpenAccessibility"
+                        style="@style/Widget.Zen.Button.Outlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:text="@string/open_accessibility_settings" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:text="@string/settings_tracked_apps"
+                        android:textAppearance="@style/TextAppearance.Zen.SectionTitle" />
+
+                    <LinearLayout
+                        android:id="@+id/settingsTrackedApps"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:orientation="vertical" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:text="@string/settings_section_data"
+                android:textAppearance="@style/TextAppearance.Zen.Label.Overline" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Zen.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        android:id="@+id/settingsHealthStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Zen.Body" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/settingsHealthButton"
+                        style="@style/Widget.Zen.Button.Outlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:text="@string/request_health_permissions" />
+
+                    <TextView
+                        android:id="@+id/settingsUsageStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:textAppearance="@style/TextAppearance.Zen.Body" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/settingsUsageButton"
+                        style="@style/Widget.Zen.Button.Outlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:text="@string/open_usage_access_settings" />
+
+                    <TextView
+                        android:id="@+id/settingsCalendarStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_lg"
+                        android:textAppearance="@style/TextAppearance.Zen.Body" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/settingsCalendarButton"
+                        style="@style/Widget.Zen.Button.Outlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:text="@string/request_calendar_permission" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:text="@string/settings_section_ai"
+                android:textAppearance="@style/TextAppearance.Zen.Label.Overline" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Zen.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        android:id="@+id/settingsBackboardStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Zen.Body" />
+
+                    <TextView
+                        android:id="@+id/settingsGeminiStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:textAppearance="@style/TextAppearance.Zen.Body" />
+
+                    <TextView
+                        android:id="@+id/settingsElevenLabsStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:textAppearance="@style/TextAppearance.Zen.Body" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:text="@string/settings_section_appearance"
+                android:textAppearance="@style/TextAppearance.Zen.Label.Overline" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Zen.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/card_padding"
+                    android:text="@string/settings_appearance_dark"
+                    android:textAppearance="@style/TextAppearance.Zen.Body" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:text="@string/settings_section_about"
+                android:textAppearance="@style/TextAppearance.Zen.Label.Overline" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Zen.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:layout_marginBottom="@dimen/space_xxl">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_branding"
+                        android:textAppearance="@style/TextAppearance.Zen.SectionTitle" />
+
+                    <TextView
+                        android:id="@+id/settingsVersion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:textAppearance="@style/TextAppearance.Zen.Caption" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

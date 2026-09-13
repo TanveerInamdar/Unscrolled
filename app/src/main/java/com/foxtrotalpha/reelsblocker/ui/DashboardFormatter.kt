@@ -1,10 +1,13 @@
 package com.foxtrotalpha.reelsblocker.ui
 
+import android.content.Context
+import com.foxtrotalpha.reelsblocker.R
 import com.foxtrotalpha.reelsblocker.data.CalendarEvent
 import com.foxtrotalpha.reelsblocker.data.SleepSession
 import java.text.NumberFormat
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -18,6 +21,14 @@ object DashboardFormatter {
 
     fun formatTodayDate(date: LocalDate): String {
         return date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
+    }
+
+    fun greetingFor(context: Context, time: LocalTime = LocalTime.now()): String {
+        return when (time.hour) {
+            in 5..11 -> context.getString(R.string.greeting_morning)
+            in 12..16 -> context.getString(R.string.greeting_afternoon)
+            else -> context.getString(R.string.greeting_evening)
+        }
     }
 
     fun formatSteps(count: Long?): String {
@@ -44,20 +55,40 @@ object DashboardFormatter {
         return date.format(DateTimeFormatter.ofPattern("EEE", Locale.getDefault()))
     }
 
+    fun formatClock(epochMs: Long): String {
+        return Instant.ofEpochMilli(epochMs).atZone(ZoneId.systemDefault()).format(timeFormatter)
+    }
+
     fun formatSleepSummary(sessions: List<SleepSession>): String? {
-        if (sessions.isEmpty()) return null
-        val primary = sessions.maxByOrNull { it.durationMs } ?: return null
-        val zone = ZoneId.systemDefault()
-        val bedtime = Instant.ofEpochMilli(primary.bedtimeMs).atZone(zone).format(timeFormatter)
-        val wake = Instant.ofEpochMilli(primary.wakeMs).atZone(zone).format(timeFormatter)
-        val duration = formatDurationMs(primary.durationMs)
+        val primary = primarySleep(sessions) ?: return null
         val napSuffix = if (sessions.size > 1) " · + nap" else ""
-        return "$bedtime – $wake · $duration$napSuffix"
+        return "${formatClock(primary.bedtimeMs)} – ${formatClock(primary.wakeMs)} · ${formatDurationMs(primary.durationMs)}$napSuffix"
+    }
+
+    fun primarySleep(sessions: List<SleepSession>): SleepSession? {
+        if (sessions.isEmpty()) return null
+        return sessions.maxByOrNull { it.durationMs }
     }
 
     fun formatCalendarTime(event: CalendarEvent): String {
         if (event.allDay) return "All day"
-        val zone = ZoneId.systemDefault()
-        return Instant.ofEpochMilli(event.startMs).atZone(zone).format(timeFormatter)
+        return formatClock(event.startMs)
+    }
+
+    fun heroSummary(
+        context: Context,
+        blocksToday: Int,
+        unproductiveMsToday: Long,
+        stepsToday: Long?,
+    ): String {
+        return when {
+            blocksToday > 0 -> context.getString(R.string.hero_summary_blocks, blocksToday)
+            unproductiveMsToday > 0L -> context.getString(
+                R.string.hero_summary_time,
+                formatDurationMs(unproductiveMsToday),
+            )
+            stepsToday != null && stepsToday > 0L -> context.getString(R.string.hero_summary_default)
+            else -> context.getString(R.string.hero_summary_clear)
+        }
     }
 }

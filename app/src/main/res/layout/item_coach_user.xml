@@ -15,6 +15,6 @@
         android:background="@drawable/bg_bubble_user"
         android:paddingHorizontal="14dp"
         android:paddingVertical="10dp"
-        android:textColor="@color/dashboard_text_primary"
-        android:textSize="15sp" />
+        android:textAppearance="@style/TextAppearance.Zen.Body"
+        android:textColor="@color/zen_text_primary" />
 </FrameLayout>

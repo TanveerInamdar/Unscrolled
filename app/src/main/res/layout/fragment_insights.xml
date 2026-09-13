@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/insightsRefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/zen_bg">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/space_xxl">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/screen_padding"
+            android:paddingTop="@dimen/space_xl">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/insights_title"
+                android:textAppearance="@style/TextAppearance.Zen.Display"
+                android:textSize="28sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:text="@string/insights_subtitle"
+                android:textAppearance="@style/TextAppearance.Zen.Body" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/rangeGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/rangeSeven"
+                    style="@style/Widget.Zen.Chip.Range"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/insights_range_7" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/rangeThirty"
+                    style="@style/Widget.Zen.Chip.Range"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:text="@string/insights_range_30" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:text="@string/insights_range_30_hint"
+                android:textAppearance="@style/TextAppearance.Zen.Caption" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:orientation="horizontal">
+
+                <com.foxtrotalpha.reelsblocker.ui.components.MetricCardView
+                    android:id="@+id/summaryScreen"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    android:layout_weight="1" />
+
+                <com.foxtrotalpha.reelsblocker.ui.components.MetricCardView
+                    android:id="@+id/summaryBlocks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_sm"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_md"
+                android:orientation="horizontal">
+
+                <com.foxtrotalpha.reelsblocker.ui.components.MetricCardView
+                    android:id="@+id/summarySteps"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    android:layout_weight="1" />
+
+                <com.foxtrotalpha.reelsblocker.ui.components.MetricCardView
+                    android:id="@+id/summarySleep"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_sm"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <com.foxtrotalpha.reelsblocker.ui.components.ChartCardView
+                android:id="@+id/stepsChartCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg" />
+
+            <com.foxtrotalpha.reelsblocker.ui.components.ChartCardView
+                android:id="@+id/screenChartCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg" />
+
+            <com.foxtrotalpha.reelsblocker.ui.components.ChartCardView
+                android:id="@+id/blocksChartCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg" />
+
+            <com.foxtrotalpha.reelsblocker.ui.components.ChartCardView
+                android:id="@+id/sleepChartCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/appsCard"
+                style="@style/Widget.Zen.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/insights_where_time"
+                        android:textAppearance="@style/TextAppearance.Zen.SectionTitle" />
+
+                    <LinearLayout
+                        android:id="@+id/appsList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_md"
+                        android:orientation="vertical" />
+
+                    <com.foxtrotalpha.reelsblocker.ui.components.EmptyStateView
+                        android:id="@+id/appsEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -1,8 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.ReelsBlocker" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryContainer">@color/primary_container</item>
-        <item name="android:statusBarColor">@color/primary</item>
+    <style name="Theme.FoxtrotAlpha" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/zen_sage</item>
+        <item name="colorOnPrimary">@color/zen_on_sage</item>
+        <item name="colorPrimaryContainer">@color/zen_sage_container</item>
+        <item name="colorOnPrimaryContainer">@color/zen_sage</item>
+        <item name="colorSecondary">@color/zen_gold</item>
+        <item name="colorOnSecondary">@color/zen_on_sage</item>
+        <item name="colorSecondaryContainer">@color/zen_gold_muted</item>
+        <item name="colorOnSecondaryContainer">@color/zen_gold</item>
+        <item name="colorSurface">@color/zen_bg</item>
+        <item name="colorOnSurface">@color/zen_text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/zen_text_secondary</item>
+        <item name="colorSurfaceContainer">@color/zen_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/zen_surface_elevated</item>
+        <item name="colorOutline">@color/zen_divider</item>
+        <item name="colorError">@color/zen_error</item>
+        <item name="android:colorBackground">@color/zen_bg</item>
+        <item name="android:statusBarColor">@color/zen_bg</item>
+        <item name="android:navigationBarColor">@color/zen_bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="shapeAppearanceCornerMedium">@style/ShapeAppearance.Zen.Medium</item>
+        <item name="shapeAppearanceCornerLarge">@style/ShapeAppearance.Zen.Large</item>
+        <item name="materialCardViewStyle">@style/Widget.Zen.Card</item>
+        <item name="materialButtonStyle">@style/Widget.Zen.Button.Primary</item>
+        <item name="materialSwitchStyle">@style/Widget.Zen.Switch</item>
+        <item name="bottomNavigationStyle">@style/Widget.Zen.BottomNav</item>
+        <item name="chipStyle">@style/Widget.Zen.Chip.Range</item>
     </style>
+
+    <style name="Theme.ReelsBlocker" parent="Theme.FoxtrotAlpha" />
 </resources>

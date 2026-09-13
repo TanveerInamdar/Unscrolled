@@ -54,7 +54,29 @@ interface BlockEventDao {
         ORDER BY date
         """,
     )
+    fun observeCountsBetween(fromDate: String, toDate: String): Flow<List<DailyBlockTotal>>
+
+    @Query(
+        """
+        SELECT date AS date, COUNT(*) AS total
+        FROM block_events
+        WHERE date BETWEEN :fromDate AND :toDate
+        GROUP BY date
+        ORDER BY date
+        """,
+    )
     suspend fun countsBetween(fromDate: String, toDate: String): List<DailyBlockTotal>
+
+    @Query(
+        """
+        SELECT package_name AS package_name, COUNT(*) AS total
+        FROM block_events
+        WHERE date BETWEEN :fromDate AND :toDate
+        GROUP BY package_name
+        ORDER BY total DESC
+        """,
+    )
+    fun observeBlocksByAppBetween(fromDate: String, toDate: String): Flow<List<AppBlockTotal>>
 
     @Query("DELETE FROM block_events")
     suspend fun deleteAll()
@@ -132,6 +154,18 @@ interface DailyAppUsageDao {
         """,
     )
     fun observeUnproductiveTotals(fromDate: String, toDate: String): Flow<List<DailyUnproductiveTotal>>
+
+    @Query(
+        """
+        SELECT u.package_name AS package_name, SUM(u.foreground_ms) AS total_ms
+        FROM daily_app_usage u
+        JOIN tracked_apps t ON t.package_name = u.package_name
+        WHERE t.is_unproductive = 1 AND u.date BETWEEN :fromDate AND :toDate
+        GROUP BY u.package_name
+        ORDER BY total_ms DESC
+        """,
+    )
+    fun observeUnproductiveByAppBetween(fromDate: String, toDate: String): Flow<List<AppUsageTotal>>
 }
 
 @Dao
