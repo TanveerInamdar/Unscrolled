@@ -14,6 +14,11 @@
     <string name="restricted_settings_hint">Sideloaded app? In Settings → Apps → Reels Blocker → ⋮ menu, tap \"Allow restricted settings\" before enabling the service.</string>
 
     <string name="toast_reels_blocked">Reels blocked</string>
+    <string name="blocks_today_zero">No blocks yet today</string>
+    <plurals name="blocks_today">
+        <item quantity="one">Blocked %d time today</item>
+        <item quantity="other">Blocked %d times today</item>
+    </plurals>
     <string name="notification_channel_name">Block alerts</string>
     <string name="notification_channel_description">Shows when a Reel is blocked</string>
     <string name="notification_blocked_title">Reels blocked</string>

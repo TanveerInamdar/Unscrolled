@@ -72,6 +72,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/toggle_blocking" />
+
+            <TextView
+                android:id="@+id/blocksTodayText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/blocks_today_zero"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="14sp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

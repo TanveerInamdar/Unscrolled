@@ -9,6 +9,9 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
+import com.foxtrotalpha.reelsblocker.data.AppDatabase
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,6 +38,20 @@ class MainActivity : AppCompatActivity() {
 
         refreshStatus()
         requestNotificationPermissionIfNeeded()
+        observeBlocksToday()
+    }
+
+    private fun observeBlocksToday() {
+        val dao = AppDatabase.get(applicationContext).blockEventDao()
+        lifecycleScope.launch {
+            dao.countForDate(AppDatabase.isoDate()).collect { count ->
+                binding.blocksTodayText.text = if (count == 0) {
+                    getString(R.string.blocks_today_zero)
+                } else {
+                    resources.getQuantityString(R.plurals.blocks_today, count, count)
+                }
+            }
+        }
     }
 
     override fun onResume() {
