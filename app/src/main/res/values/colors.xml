@@ -6,6 +6,9 @@
     <color name="zen_surface_secondary">#254338</color>
     <color name="zen_sage">#73D9A2</color>
     <color name="zen_sage_soft">#5FCB94</color>
+    <color name="zen_card_rim">#C7F6DC</color>
+    <color name="zen_card_glow">#6673D9A2</color>
+    <color name="zen_card_glow_soft">#2473D9A2</color>
     <color name="zen_gold">#E8B85A</color>
     <color name="zen_sleep">#78B8B0</color>
     <color name="zen_text_primary">#F3F4EC</color>

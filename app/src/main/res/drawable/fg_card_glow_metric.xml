@@ -2,11 +2,11 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/composer_radius" />
+            <corners android:radius="@dimen/metric_card_radius" />
             <stroke
                 android:width="6dp"
                 android:color="@color/zen_card_glow_soft" />
-            <solid android:color="@color/zen_surface_elevated" />
+            <solid android:color="@android:color/transparent" />
         </shape>
     </item>
     <item
@@ -15,7 +15,7 @@
         android:right="2dp"
         android:top="2dp">
         <shape android:shape="rectangle">
-            <corners android:radius="26dp" />
+            <corners android:radius="14dp" />
             <stroke
                 android:width="2.5dp"
                 android:color="@color/zen_card_glow" />
@@ -23,12 +23,12 @@
         </shape>
     </item>
     <item
-        android:bottom="4dp"
-        android:left="4dp"
-        android:right="4dp"
-        android:top="4dp">
+        android:bottom="3.5dp"
+        android:left="3.5dp"
+        android:right="3.5dp"
+        android:top="3.5dp">
         <shape android:shape="rectangle">
-            <corners android:radius="24dp" />
+            <corners android:radius="13dp" />
             <stroke
                 android:width="@dimen/card_stroke"
                 android:color="@color/zen_card_rim" />

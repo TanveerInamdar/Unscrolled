@@ -9,6 +9,7 @@
     <dimen name="screen_padding">20dp</dimen>
     <dimen name="card_radius">20dp</dimen>
     <dimen name="card_padding">20dp</dimen>
+    <dimen name="card_stroke">1.25dp</dimen>
     <dimen name="metric_card_radius">16dp</dimen>
     <dimen name="chart_height">140dp</dimen>
     <dimen name="sparkline_height">72dp</dimen>
